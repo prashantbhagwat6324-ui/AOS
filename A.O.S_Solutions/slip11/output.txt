@@ -1,0 +1,2 @@
+This output goes into output.txt
+STDOUT successfully redirected using dup and open.

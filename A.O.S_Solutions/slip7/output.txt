@@ -1,0 +1,2 @@
+This text goes into output.txt
+Standard output successfully redirected!

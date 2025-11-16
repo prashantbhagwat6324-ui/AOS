@@ -1,0 +1,2 @@
+This output is redirected to output.txt
+Redirection done using dup and open system calls.
