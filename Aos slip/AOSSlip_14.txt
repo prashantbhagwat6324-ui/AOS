@@ -1,0 +1,110 @@
+Slip 14
+
+Q1.Display all the files from current directory whose size is greater that n Bytes Where n is accept
+from user.
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <dirent.h>
+#include <sys/stat.h>
+
+int main(int argc, char *argv[]) {
+    DIR *dir;
+    struct dirent *entry;
+    struct stat file_stat;
+    long size_limit;
+
+    // Check for command-line argument
+    if (argc != 2) {
+        printf("Usage: %s <size_limit_in_bytes>\n", argv[0]);
+        exit(EXIT_FAILURE);
+    }
+
+    // Parse the size limit
+    size_limit = atol(argv[1]);
+    if (size_limit <= 0) {
+        printf("Invalid size limit\n");
+        exit(EXIT_FAILURE);
+    }
+
+    // Open the current directory
+    dir = opendir(".");
+    if (dir == NULL) {
+        perror("opendir");
+        exit(EXIT_FAILURE);
+    }
+
+    printf("Files with size greater than %ld bytes:\n", size_limit);
+
+    // Read through the directory and check file sizes
+    while ((entry = readdir(dir)) != NULL) {
+        // Get the status of the file
+        if (stat(entry->d_name, &file_stat) == -1) {
+            perror("stat");
+            continue;
+        }
+
+        // Check if it's a regular file and its size is greater than the limit
+        if (S_ISREG(file_stat.st_mode) && file_stat.st_size > size_limit) {
+            printf("%s - %.2f KB\n", entry->d_name, file_stat.st_size / 1024.0);
+        }
+    }
+
+    closedir(dir);
+    return 0;
+}
+
+gcc slip14_1.c -o slip14_1
+./slip14_1
+
+Q2. Write a C program to find file properties such as inode number, number of hard link, File
+permissions, File size, File access and modification time and so on of a given file using stat()
+system call.
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <dirent.h>
+#include <sys/stat.h>
+
+int main() {
+    DIR *dir;
+    struct dirent *entry;
+    struct stat file_stat;
+    long size_limit;
+
+    // Accept file size limit from the user
+    printf("Enter size limit in bytes: ");
+    if (scanf("%ld", &size_limit) != 1) {
+        printf("Invalid input\n");
+        exit(EXIT_FAILURE);
+    }
+
+    // Open the current directory
+    dir = opendir(".");
+    if (dir == NULL) {
+        perror("opendir");
+        exit(EXIT_FAILURE);
+    }
+
+    printf("Files with size greater than %ld bytes:\n", size_limit);
+
+    // Read through the directory and check file sizes
+    while ((entry = readdir(dir)) != NULL) {
+        // Get the status of the file
+        if (stat(entry->d_name, &file_stat) == -1) {
+            perror("stat");
+            continue;
+        }
+
+        // Check if it's a regular file and its size is greater than the limit
+        if (S_ISREG(file_stat.st_mode) && file_stat.st_size > size_limit) {
+            printf("%s - %ld bytes\n", entry->d_name, file_stat.st_size);
+        }
+    }
+
+    closedir(dir);
+    return 0;
+}
+
+cc slip14_2.c -o slip14_2
+./slip14_2 myfile.txt

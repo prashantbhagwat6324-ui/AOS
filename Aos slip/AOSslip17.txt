@@ -1,0 +1,125 @@
+AOSslip17
+
+Q.1)	Read the current directory and display the name of the files, no of files in current directory	
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
+
+int main(int argc, char *argv[])
+{
+    if (argc < 2)
+    {
+        printf("Usage: %s <file1> <file2> ...\n", argv[0]);
+        return 1;
+    }
+    int i;
+    for (i = 1; i < argc; i++)
+    {
+        if (access(argv[i], F_OK) == 0)
+        {
+            printf("%s: Found\n", argv[i]);
+        }
+        else
+        {
+            printf("%s: Not Found\n", argv[i]);
+        }
+    }
+
+    return 0;
+}
+
+Q.2)	Write a C program to implement the following unix/linux command (use fork, pipe and exec system call). Your program should block the signal Ctrl-C and Ctrl-\ signal during the execution. i. Ls –l | wc –l	
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
+#include <signal.h>
+#include <sys/types.h>
+#include <sys/wait.h>
+
+void block_signals() {
+    sigset_t set;
+    sigemptyset(&set);
+    sigaddset(&set, SIGINT);  // Block Ctrl-C
+    sigaddset(&set, SIGQUIT); // Block Ctrl-\
+    sigprocmask(SIG_BLOCK, &set, NULL); // Apply the signal mask
+}
+
+void unblock_signals() {
+    sigset_t set;
+    sigemptyset(&set);
+    sigaddset(&set, SIGINT);  // Unblock Ctrl-C
+    sigaddset(&set, SIGQUIT); // Unblock Ctrl-\
+    sigprocmask(SIG_UNBLOCK, &set, NULL); // Apply the signal mask
+}
+
+int main() {
+    int pipefd[2];
+    pid_t pid1, pid2;
+
+    // Create a pipe
+    if (pipe(pipefd) == -1) {
+        perror("pipe");
+        exit(EXIT_FAILURE);
+    }
+
+    // Block the signals
+    block_signals();
+
+    // Fork the first child process for 'ls -l'
+    pid1 = fork();
+    if (pid1 < 0) {
+        perror("fork");
+        exit(EXIT_FAILURE);
+    }
+
+    if (pid1 == 0) { // Child process 1
+        // Close unused write end
+        close(pipefd[1]);
+
+        // Redirect stdout to the pipe
+        dup2(pipefd[0], STDIN_FILENO);
+        close(pipefd[0]); // Close original read end
+
+        // Execute 'ls -l'
+        execlp("ls", "ls", "-l", NULL);
+        perror("execlp"); // Only reached if exec fails
+        exit(EXIT_FAILURE);
+    }
+
+    // Fork the second child process for 'wc -l'
+    pid2 = fork();
+    if (pid2 < 0) {
+        perror("fork");
+        exit(EXIT_FAILURE);
+    }
+
+    if (pid2 == 0) { // Child process 2
+        // Close unused read end
+        close(pipefd[0]);
+
+        // Redirect stdout to the write end of the pipe
+        dup2(pipefd[1], STDOUT_FILENO);
+        close(pipefd[1]); // Close original write end
+
+        // Execute 'wc -l'
+        execlp("wc", "wc", "-l", NULL);
+        perror("execlp"); // Only reached if exec fails
+        exit(EXIT_FAILURE);
+    }
+
+    // Parent process
+    // Close both ends of the pipe
+    close(pipefd[0]);
+    close(pipefd[1]);
+
+    // Wait for both child processes to finish
+    waitpid(pid1, NULL, 0);
+    waitpid(pid2, NULL, 0);
+
+    // Unblock the signals
+    unblock_signals();
+
+    return 0;
+}

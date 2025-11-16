@@ -1,0 +1,94 @@
+Q.1] Write a C program to get and set the resource limits such as files, memory associated with a
+process
+Ans -
+#include <stdio.h>
+#include <stdlib.h>
+#include <sys/resource.h>
+
+void print_resource_limits() {
+    struct rlimit rlim;
+
+    // Get the current resource limit for the maximum number of open files
+    if (getrlimit(RLIMIT_NOFILE, &rlim) == 0) {
+        printf("Current maximum number of open files: %lu\n", (unsigned long)rlim.rlim_cur);
+        printf("Maximum allowed number of open files: %lu\n", (unsigned long)rlim.rlim_max);
+    } else {
+        perror("getrlimit");
+    }
+
+    // Get the current resource limit for maximum memory (in bytes)
+    if (getrlimit(RLIMIT_AS, &rlim) == 0) {
+        printf("Current maximum memory limit: %lu bytes\n", (unsigned long)rlim.rlim_cur);
+        printf("Maximum allowed memory limit: %lu bytes\n", (unsigned long)rlim.rlim_max);
+    } else {
+        perror("getrlimit");
+    }
+}
+
+void set_resource_limit(unsigned long new_limit, int resource_type) {
+    struct rlimit rlim;
+
+    // Get the current resource limit
+    if (getrlimit(resource_type, &rlim) == 0) {
+        rlim.rlim_cur = new_limit;  // Set the new resource limit
+
+        // Set the new resource limit
+        if (setrlimit(resource_type, &rlim) == 0) {
+            printf("New resource limit set successfully.\n");
+        } else {
+            perror("setrlimit");
+        }
+    } else {
+        perror("getrlimit");
+    }
+}
+
+int main() {
+    printf("Before setting resource limits:\n");
+    print_resource_limits();
+
+    // Set a new resource limit (change this value as needed)
+    unsigned long new_file_limit = 1000;  // New limit for number of open files
+    set_resource_limit(new_file_limit, RLIMIT_NOFILE);  // Set new file limit
+
+    unsigned long new_memory_limit = 1024 * 1024 * 10;  // 10MB of memory
+    set_resource_limit(new_memory_limit, RLIMIT_AS);  // Set new memory limit
+
+    printf("\nAfter setting resource limits:\n");
+    print_resource_limits();
+
+    return 0;
+}
+
+Q.2] Write a C program that redirects standard output to a file output.txt. (use of dup and open system
+call).
+Ans -
+#include <stdio.h>
+#include <fcntl.h>
+#include <unistd.h>
+
+int main() {
+    int file_descriptor;
+
+    // Open (or create) the output.txt file with write-only permissions and create if doesn't exist
+    file_descriptor = open("output.txt", O_WRONLY | O_CREAT | O_TRUNC, S_IRUSR | S_IWUSR);
+
+    if (file_descriptor == -1) {
+        perror("Error opening/creating file");
+        return 1;
+    }
+
+    // Redirect standard output to the file using dup2
+    if (dup2(file_descriptor, STDOUT_FILENO) == -1) {
+        perror("Error redirecting output");
+        return 1;
+    }
+
+    // Close the file descriptor as it's no longer needed
+    close(file_descriptor);
+
+    // Now, printf will write to output.txt instead of the terminal
+    printf("This message will be written to output.txt\n");
+
+    return 0;
+}
