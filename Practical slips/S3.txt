@@ -1,0 +1,130 @@
+Slip 3
+Q1. Write a bootstrap application to display thumbnails of the images. 
+1] Model the following system as a document database. Consider 
+employee and department’s information
+2] Assume appropriate attributes and collections as per the query
+requirements. 
+3] Insert at least 5 documents in each collection. 
+4] Answer the following Queries.
+a. Display name of employee who has highest salary. 
+b. Display biggest department with max. no. of employees. 
+c. Write a cursor which shows department wise employee
+information. 
+d. List all the employees who work in Sales dept and salary > 50000
+Ans -
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Employee System</title>
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+
+    <!-- Bootstrap Container with Row and 3 Columns -->
+    <div class="container mt-5">
+        <h2>Employee Image Thumbnails</h2>
+        <div class="row">
+            <!-- Thumbnail 1 -->
+            <div class="col-md-4">
+                <div class="card">
+                    <img src="https://via.placeholder.com/150" class="card-img-top" alt="Thumbnail 1">
+                    <div class="card-body">
+                        <p class="card-text">Employee 1</p>
+                    </div>
+                </div>
+            </div>
+            <!-- Thumbnail 2 -->
+            <div class="col-md-4">
+                <div class="card">
+                    <img src="https://via.placeholder.com/150" class="card-img-top" alt="Thumbnail 2">
+                    <div class="card-body">
+                        <p class="card-text">Employee 2</p>
+                    </div>
+                </div>
+            </div>
+            <!-- Thumbnail 3 -->
+            <div class="col-md-4">
+                <div class="card">
+                    <img src="https://via.placeholder.com/150" class="card-img-top" alt="Thumbnail 3">
+                    <div class="card-body">
+                        <p class="card-text">Employee 3</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS and dependencies -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+    <!-- MongoDB Schema and Queries (Embedded in a Script for Clarity) -->
+    <script>
+        // Assuming MongoDB is running and db variable is initialized
+
+        // Create collections for Employees and Departments
+        db.createCollection("employees");
+        db.createCollection("departments");
+
+        // Insert data into Departments collection
+        db.departments.insertMany([
+            { name: "IT", location: "New York" },
+            { name: "HR", location: "Los Angeles" },
+            { name: "Sales", location: "Chicago" },
+            { name: "Finance", location: "San Francisco" },
+            { name: "Marketing", location: "Boston" }
+        ]);
+
+        // Insert data into Employees collection
+        db.employees.insertMany([
+            { name: "John Doe", salary: 75000, department_id: ObjectId("department_id_1") },
+            { name: "Jane Smith", salary: 85000, department_id: ObjectId("department_id_2") },
+            { name: "Emily Johnson", salary: 95000, department_id: ObjectId("department_id_3") },
+            { name: "Michael Brown", salary: 60000, department_id: ObjectId("department_id_1") },
+            { name: "Sarah White", salary: 70000, department_id: ObjectId("department_id_5") }
+        ]);
+
+        // Query to find employee with highest salary
+        db.employees.find().sort({ salary: -1 }).limit(1);
+
+        // Query to find department with the most employees
+        db.employees.aggregate([
+            { $group: { _id: "$department_id", employeeCount: { $sum: 1 } } },
+            { $sort: { employeeCount: -1 } },
+            { $limit: 1 },
+            { $lookup: {
+                from: "departments",
+                localField: "_id",
+                foreignField: "_id",
+                as: "department"
+            }},
+            { $unwind: "$department" },
+            { $project: { "department.name": 1, "employeeCount": 1 } }
+        ]);
+
+        // Query to show department-wise employee information
+        db.employees.aggregate([
+            { $lookup: {
+                from: "departments",
+                localField: "department_id",
+                foreignField: "_id",
+                as: "department"
+            }},
+            { $unwind: "$department" },
+            { $group: { _id: "$department.name", employees: { $push: "$name" } } }
+        ]);
+
+        // Query to list employees in Sales department with salary > 50000
+        let salesDept = db.departments.findOne({ name: "Sales" });
+        db.employees.find({
+            department_id: salesDept._id,
+            salary: { $gt: 50000 }
+        });
+    </script>
+
+</body>
+</html>

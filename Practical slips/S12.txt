@@ -1,0 +1,190 @@
+Slip 12
+Q.1] Design an appropriate HTML form for customer registration visiting a
+departmental store. Form should consist of fields such as name, contact no,
+gender, preferred days of purchasing, favorite item (to be selected from a
+list of items), suggestions etc. You should provide button to submit as well
+as reset the form contents. 
+1. Model the following online movie information as a document database.
+Consider online movie information where the each actor has acted in one or
+more movie. Each producer has produced many movies but each movie can be
+produced by more than one producers. Each movie has one or more actors acting
+in it, in different roles.
+2. Assume appropriate attributes and collections as per the query
+requirements 
+3. Insert at least 05 documents in each collection.  
+4. Answer the following Queries.
+a. List the names of movies with the highest budget.  
+b. Display the details of producer who have produced more than
+ one movie in a year.  
+c. List the names of actors who have acted in at least one movie, in which
+‘Akshay’ has acted.  
+d. List the names of movies, produced by more than one produce. 
+Ans - 
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Customer Registration & Movie Information</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            width: 50%;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #ffffff;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            margin-top: 50px;
+        }
+
+        h2 {
+            text-align: center;
+            color: #333;
+        }
+
+        label {
+            font-weight: bold;
+            margin-top: 10px;
+            display: block;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 10px;
+            margin: 5px 0 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+
+        button {
+            padding: 10px 20px;
+            margin: 10px 5px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .submit-btn {
+            background-color: #4CAF50;
+            color: white;
+        }
+
+        .reset-btn {
+            background-color: #f44336;
+            color: white;
+        }
+
+        button:hover {
+            opacity: 0.9;
+        }
+    </style>
+</head>
+<body>
+    <!-- Customer Registration Form -->
+    <div class="container">
+        <h2>Customer Registration Form</h2>
+        <form>
+            <label for="name">Full Name:</label>
+            <input type="text" id="name" name="name" placeholder="Enter your full name" required>
+
+            <label for="contact">Contact Number:</label>
+            <input type="tel" id="contact" name="contact" placeholder="Enter your contact number" required>
+
+            <label for="gender">Gender:</label>
+            <select id="gender" name="gender" required>
+                <option value="Male">Male</option>
+                <option value="Female">Female</option>
+                <option value="Other">Other</option>
+            </select>
+
+            <label for="days">Preferred Days of Purchasing:</label>
+            <input type="text" id="days" name="days" placeholder="e.g., Weekends, Weekdays" required>
+
+            <label for="item">Favorite Item:</label>
+            <select id="item" name="item" required>
+                <option value="Groceries">Groceries</option>
+                <option value="Electronics">Electronics</option>
+                <option value="Clothing">Clothing</option>
+                <option value="Furniture">Furniture</option>
+            </select>
+
+            <label for="suggestions">Suggestions:</label>
+            <textarea id="suggestions" name="suggestions" rows="5" placeholder="Enter your suggestions"></textarea>
+
+            <button type="submit" class="submit-btn">Submit</button>
+            <button type="reset" class="reset-btn">Reset</button>
+        </form>
+    </div>
+
+    <!-- MongoDB Schema and Queries -->
+    <script>
+        // MongoDB Implementation for Online Movie System
+
+        // Create collections for movies, actors, and producers
+        db.createCollection("movies");
+        db.createCollection("actors");
+        db.createCollection("producers");
+
+        // Insert Movies
+        db.movies.insertMany([
+            { movie_id: 1, name: "Movie A", budget: 1000000, actors: ["Actor1", "Actor2"], producers: ["Producer1", "Producer2"] },
+            { movie_id: 2, name: "Movie B", budget: 2000000, actors: ["Actor3", "Actor4"], producers: ["Producer3"] },
+            { movie_id: 3, name: "Movie C", budget: 1500000, actors: ["Actor1", "Actor4"], producers: ["Producer2", "Producer3"] },
+            { movie_id: 4, name: "Movie D", budget: 3000000, actors: ["Actor2", "Akshay"], producers: ["Producer1"] },
+            { movie_id: 5, name: "Movie E", budget: 2500000, actors: ["Akshay", "Actor3"], producers: ["Producer3", "Producer4"] }
+        ]);
+
+        // Insert Actors
+        db.actors.insertMany([
+            { actor_id: 1, name: "Actor1", movies: ["Movie A", "Movie C"] },
+            { actor_id: 2, name: "Actor2", movies: ["Movie A", "Movie D"] },
+            { actor_id: 3, name: "Actor3", movies: ["Movie B", "Movie E"] },
+            { actor_id: 4, name: "Akshay", movies: ["Movie D", "Movie E"] },
+            { actor_id: 5, name: "Actor4", movies: ["Movie B", "Movie C"] }
+        ]);
+
+        // Insert Producers
+        db.producers.insertMany([
+            { producer_id: 1, name: "Producer1", movies: ["Movie A", "Movie D"], year: 2023 },
+            { producer_id: 2, name: "Producer2", movies: ["Movie A", "Movie C"], year: 2023 },
+            { producer_id: 3, name: "Producer3", movies: ["Movie B", "Movie C", "Movie E"], year: 2023 },
+            { producer_id: 4, name: "Producer4", movies: ["Movie E"], year: 2023 }
+        ]);
+
+        // a) List the names of movies with the highest budget
+        let maxBudget = db.movies.find().sort({ budget: -1 }).limit(1).toArray()[0].budget;
+        db.movies.find({ budget: maxBudget }, { name: 1, budget: 1 }).forEach(function(doc) {
+            print("Movie Name: " + doc.name + ", Budget: " + doc.budget);
+        });
+
+        // b) Display the details of producers who have produced more than one movie in a year
+        db.producers.aggregate([
+            { $group: { _id: "$name", movieCount: { $sum: { $size: "$movies" } }, year: { $first: "$year" } } },
+            { $match: { movieCount: { $gt: 1 } } }
+        ]).forEach(function(doc) {
+            print("Producer: " + doc._id + ", Year: " + doc.year + ", Movies Produced: " + doc.movieCount);
+        });
+
+        // c) List the names of actors who have acted in at least one movie, in which ‘Akshay’ has acted
+        let akshayMovies = db.actors.findOne({ name: "Akshay" }).movies;
+        db.actors.find({ name: { $ne: "Akshay" }, movies: { $in: akshayMovies } }).forEach(function(doc) {
+            print("Actor Name: " + doc.name);
+        });
+
+        // d) List the names of movies produced by more than one producer
+        db.movies.find({ producers: { $size: { $gt: 1 } } }, { name: 1 }).forEach(function(doc) {
+            print("Movie Name: " + doc.name);
+        });
+    </script>
+</body>
+</html>

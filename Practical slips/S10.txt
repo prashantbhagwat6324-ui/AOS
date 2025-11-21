@@ -1,0 +1,139 @@
+ Slip 10
+Q.1] Create a web page that shows use of transition properties, transition delay 
+and duration effect.
+1. Model the following Online shopping information as a document database.
+Consider online shopping where the customer can get different products
+from different brands. Customers can rate the brands and products
+2. Assume appropriate attributes and collections as per the query
+requirements  
+3. Insert at least 5 documents in each collection. 
+4. Answer the following Queries.
+a. List the names of product whose warranty period is one year 
+b. List the customers has done purchase on “15/08/2023”.  
+c. Display the name s of products with brand which have highest rating.
+d. Display customers who stay in …… city and billamt >50000 .
+Ans - 
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CSS Transition & Online Shopping</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f9;
+        }
+
+        h1 {
+            margin-top: 50px;
+            font-size: 2rem;
+            color: #333;
+        }
+
+        .box-container {
+            display: flex;
+            justify-content: center;
+            margin-top: 50px;
+        }
+
+        .box {
+            width: 150px;
+            height: 150px;
+            margin: 10px;
+            background-color: #4CAF50;
+            border-radius: 10px;
+            transition: transform 0.5s ease-in-out, background-color 1s ease, opacity 1s ease;
+            opacity: 1;
+        }
+
+        .box:hover {
+            transform: scale(1.3) rotate(15deg);
+            background-color: #ff6347;
+            opacity: 0.8;
+        }
+
+        .box1 {
+            transition-delay: 0.2s;
+        }
+
+        .box2 {
+            transition-delay: 0.5s;
+        }
+
+        .box3 {
+            transition-delay: 0.8s;
+        }
+    </style>
+</head>
+<body>
+    <h1>CSS Transition Effects</h1>
+    <div class="box-container">
+        <div class="box box1"></div>
+        <div class="box box2"></div>
+        <div class="box box3"></div>
+    </div>
+
+    <!-- MongoDB Schema and Queries -->
+    <script>
+        // MongoDB Implementation for Online Shopping System
+
+        // Create collections for customers, products, and brands
+        db.createCollection("customers");
+        db.createCollection("products");
+        db.createCollection("brands");
+
+        // Insert data into Customers collection
+        db.customers.insertMany([
+            { name: "John Doe", city: "Mumbai", billamt: 60000, purchase_date: new Date("2023-08-15") },
+            { name: "Jane Smith", city: "Pune", billamt: 45000, purchase_date: new Date("2023-08-16") },
+            { name: "Emily Johnson", city: "Mumbai", billamt: 80000, purchase_date: new Date("2023-08-15") },
+            { name: "Michael Brown", city: "Nashik", billamt: 30000, purchase_date: new Date("2023-08-17") },
+            { name: "Sarah Lee", city: "Pune", billamt: 90000, purchase_date: new Date("2023-08-15") }
+        ]);
+
+        // Insert data into Products collection
+        db.products.insertMany([
+            { name: "Laptop", warranty: "1 Year", brand: "BrandA", rating: 4.8 },
+            { name: "Smartphone", warranty: "2 Years", brand: "BrandB", rating: 4.5 },
+            { name: "Washing Machine", warranty: "1 Year", brand: "BrandC", rating: 4.9 },
+            { name: "Television", warranty: "1 Year", brand: "BrandA", rating: 4.7 },
+            { name: "Refrigerator", warranty: "3 Years", brand: "BrandC", rating: 4.6 }
+        ]);
+
+        // Insert data into Brands collection
+        db.brands.insertMany([
+            { name: "BrandA", rating: 4.8 },
+            { name: "BrandB", rating: 4.5 },
+            { name: "BrandC", rating: 4.9 },
+            { name: "BrandD", rating: 4.3 },
+            { name: "BrandE", rating: 4.7 }
+        ]);
+
+        // a) List the names of products whose warranty period is one year
+        db.products.find({ warranty: "1 Year" }).forEach(function(doc) {
+            print(doc.name);
+        });
+
+        // b) List the customers who made a purchase on “15/08/2023”
+        db.customers.find({ purchase_date: new Date("2023-08-15") }).forEach(function(doc) {
+            print(doc.name + " - City: " + doc.city);
+        });
+
+        // c) Display the names of products with the brand having the highest rating
+        let highestRatedBrand = db.brands.find().sort({ rating: -1 }).limit(1).toArray()[0].name;
+        db.products.find({ brand: highestRatedBrand }).forEach(function(doc) {
+            print("Product: " + doc.name + " - Brand: " + doc.brand);
+        });
+
+        // d) Display customers who stay in a specific city (e.g., “Mumbai”) and have a bill amount >50000
+        db.customers.find({ city: "Mumbai", billamt: { $gt: 50000 } }).forEach(function(doc) {
+            print(doc.name + " - Bill Amount: " + doc.billamt);
+        });
+    </script>
+</body>
+</html>

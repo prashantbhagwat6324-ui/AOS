@@ -1,0 +1,175 @@
+Slip 23
+Q.1] Create a web page to display image on screen
+Apply the following
+a. Display image in tiles
+b. Rotate image in clockwise and anticlockwise direction 
+Model the following Automobile information system as a graph model, and
+answer the following queries using Cypher.
+Consider an Automobile industry manufacturing different types of vehicles
+like Two- Wheeler, Four-Wheeler, etc. A customer can buy one or more types
+of vehicle. A person can recommend or rate a vehicle type.
+1. Identify the labels and relationships, along with their properties, and
+draw a high-level Graph model. [3]
+2. Create nodes and relationships, along with their properties, and
+visualize your actual Graph model. [3]
+3. Answer the following Queries:
+a. List the characteristics of four wheeler types. [3]
+b. List the name of customers who bought a two wheeler vehicle. [3]
+c. List the customers who bought more than one type of vehicle. [4]
+d. List the most recommended vehicle type.
+Ans - 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Automobile Industry & Image Effects</title>
+    <style>
+        /* Global Styles */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f9;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            height: 100vh;
+        }
+
+        h1 {
+            font-size: 3em;
+            color: #4CAF50;
+        }
+
+        /* Image Tile Display */
+        .image-container {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr); /* 3 columns */
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .image-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border: 5px solid #ddd;
+            transition: transform 0.5s ease-in-out;
+        }
+
+        /* Button Styling */
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <h1>Automobile Showroom & Image Effects</h1>
+
+    <!-- Image Tile Display -->
+    <div class="image-container">
+        <img src="https://via.placeholder.com/150" alt="Image 1" id="image1">
+        <img src="https://via.placeholder.com/150" alt="Image 2" id="image2">
+        <img src="https://via.placeholder.com/150" alt="Image 3" id="image3">
+        <img src="https://via.placeholder.com/150" alt="Image 4" id="image4">
+        <img src="https://via.placeholder.com/150" alt="Image 5" id="image5">
+        <img src="https://via.placeholder.com/150" alt="Image 6" id="image6">
+    </div>
+
+    <!-- Button to Rotate Image -->
+    <button onclick="rotateImages('clockwise')">Rotate Clockwise</button>
+    <button onclick="rotateImages('anticlockwise')">Rotate Anticlockwise</button>
+
+    <script>
+        // Function to rotate images
+        function rotateImages(direction) {
+            const images = document.querySelectorAll('.image-container img');
+            images.forEach(img => {
+                if (direction === 'clockwise') {
+                    img.style.transform = 'rotate(90deg)';
+                } else if (direction === 'anticlockwise') {
+                    img.style.transform = 'rotate(-90deg)';
+                }
+            });
+        }
+
+        // Neo4j Graph Model and Cypher Queries for Automobile Industry
+
+        const createNodes = `
+        // Create Vehicle Types
+        CREATE (:Vehicle {type: "Two-Wheeler", category: "Motorcycle", price: 50000}),
+               (:Vehicle {type: "Four-Wheeler", category: "Car", price: 500000}),
+               (:Vehicle {type: "Two-Wheeler", category: "Scooter", price: 30000}),
+               (:Vehicle {type: "Four-Wheeler", category: "SUV", price: 800000}),
+               (:Vehicle {type: "Four-Wheeler", category: "Truck", price: 1000000});
+
+        // Create Customers
+        CREATE (:Customer {name: "John Doe", purchase_date: "2023-11-01"}),
+               (:Customer {name: "Jane Smith", purchase_date: "2023-11-02"}),
+               (:Customer {name: "Emily Johnson", purchase_date: "2023-11-05"});
+
+        // Create Relationships
+        MATCH (v:Vehicle {type: "Two-Wheeler"}), (c:Customer {name: "John Doe"})
+        CREATE (c)-[:PURCHASED]->(v);
+
+        MATCH (v:Vehicle {type: "Four-Wheeler"}), (c:Customer {name: "Jane Smith"})
+        CREATE (c)-[:PURCHASED]->(v);
+
+        MATCH (v:Vehicle {type: "Two-Wheeler"}), (c:Customer {name: "Emily Johnson"})
+        CREATE (c)-[:PURCHASED]->(v);
+
+        MATCH (v:Vehicle {type: "Four-Wheeler"}), (c:Customer {name: "Emily Johnson"})
+        CREATE (c)-[:PURCHASED]->(v);
+
+        MATCH (c:Customer {name: "Emily Johnson"}), (v:Vehicle {type: "Two-Wheeler"})
+        CREATE (c)-[:RECOMMENDED]->(v);
+        `;
+
+        const queries = {
+            listFourWheelerCharacteristics: `
+            MATCH (v:Vehicle {type: "Four-Wheeler"})
+            RETURN v.category AS Category, v.price AS Price;
+            `,
+            customersWithTwoWheeler: `
+            MATCH (c:Customer)-[:PURCHASED]->(v:Vehicle {type: "Two-Wheeler"})
+            RETURN c.name AS CustomerName;
+            `,
+            customersWithMultipleVehicles: `
+            MATCH (c:Customer)-[:PURCHASED]->(v:Vehicle)
+            WITH c, COUNT(v) AS vehicleCount
+            WHERE vehicleCount > 1
+            RETURN c.name AS CustomerName;
+            `,
+            mostRecommendedVehicle: `
+            MATCH (c:Customer)-[:RECOMMENDED]->(v:Vehicle)
+            RETURN v.type AS VehicleType, COUNT(c) AS Recommendations
+            ORDER BY Recommendations DESC
+            LIMIT 1;
+            `,
+        };
+
+        console.log('Nodes Creation:');
+        console.log(createNodes);
+
+        console.log('Queries:');
+        console.log('a) List of characteristics of four-wheeler types:', queries.listFourWheelerCharacteristics);
+        console.log('b) Customers who bought a two-wheeler vehicle:', queries.customersWithTwoWheeler);
+        console.log('c) Customers who bought more than one type of vehicle:', queries.customersWithMultipleVehicles);
+        console.log('d) Most recommended vehicle type:', queries.mostRecommendedVehicle);
+    </script>
+
+</body>
+</html>

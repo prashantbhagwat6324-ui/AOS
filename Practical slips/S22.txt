@@ -1,0 +1,200 @@
+Slip 22
+Q.1] Create a web page to create 3D text. Apply all text effects like text shadow,
+text overflow, wordwrap etc 
+ Model the following Car Showroom information as a graph model, and answer
+ the queries using Cypher. Consider a car showroom with different models of
+ cars like sofas Honda city, Skoda, Creta, Swift, Ertiga etc. Showroom is
+ divided into different sections, one section for each car model; each section is
+ handled by a sales staff. A sales staff can handle one or more sections.
+ Customer may enquire about car. An enquiry may result in a purchase by the
+ customer.
+1. Identify the labels and relationships, along with their properties, and
+draw a high-level Graph model.  
+2. Create nodes and relationships, along with their properties, and
+visualize your actual Graph model.  
+3. Answer the following queries:
+a. List the types of cars available in the showroom.  
+b. List the sections handled by Mr. Narayan.  
+c. List the names of customers who have done only enquiry but not
+made any purchase.  
+d. List the highly sale car model. 
+Ans - 
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Car Showroom & 3D Text Effects</title>
+    <style>
+        /* Global Styles */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f9;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            height: 100vh;
+        }
+
+        h1 {
+            font-size: 4em;
+            color: #4CAF50;
+            text-shadow: 3px 3px 5px rgba(0, 0, 0, 0.5), 0 0 25px #00ff00, 0 0 5px darkgreen;
+            text-align: center;
+            word-wrap: break-word;
+            overflow: hidden;
+        }
+
+        .container {
+            text-align: center;
+        }
+
+        /* Create 3D effect and animation for the text */
+        .text {
+            color: #333;
+            font-size: 5em;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 5px;
+            animation: slide 5s ease-in-out infinite;
+        }
+
+        @keyframes slide {
+            0% {
+                text-shadow: 3px 3px 5px rgba(0, 0, 0, 0.1), 0 0 15px #ff0000;
+            }
+            50% {
+                text-shadow: 5px 5px 10px rgba(0, 0, 0, 0.3), 0 0 20px #00ff00;
+            }
+            100% {
+                text-shadow: 3px 3px 5px rgba(0, 0, 0, 0.1), 0 0 25px #ff00ff;
+            }
+        }
+
+        /* Styling for the showroom info section */
+        .showroom-info {
+            font-size: 1.2em;
+            margin-top: 30px;
+        }
+
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 3D Text Section -->
+    <div class="container">
+        <h1 class="text">Welcome to the Car Showroom</h1>
+        <p class="showroom-info">Explore our wide range of car models and find your perfect match!</p>
+        <button onclick="alert('Explore Our Cars Now!')">Start Exploring</button>
+    </div>
+
+    <!-- Neo4j Graph Model and Cypher Queries -->
+    <script>
+        // Neo4j Graph Model and Cypher Queries for Car Showroom Management
+
+        const createNodes = `
+        // Create Car Models
+        CREATE (:Car {model: "Honda City", type: "Sedan", price: 1200000}),
+               (:Car {model: "Skoda", type: "Sedan", price: 1500000}),
+               (:Car {model: "Creta", type: "SUV", price: 1800000}),
+               (:Car {model: "Swift", type: "Hatchback", price: 800000}),
+               (:Car {model: "Ertiga", type: "MPV", price: 900000});
+
+        // Create Sections
+        CREATE (:Section {name: "Honda City Section"}),
+               (:Section {name: "Skoda Section"}),
+               (:Section {name: "Creta Section"}),
+               (:Section {name: "Swift Section"}),
+               (:Section {name: "Ertiga Section"});
+
+        // Create Sales Staff
+        CREATE (:SalesStaff {name: "Mr. Narayan", experience: "5 years"}),
+               (:SalesStaff {name: "Ms. Singh", experience: "3 years"});
+
+        // Create Customers
+        CREATE (:Customer {name: "John Doe", enquiry_date: "2023-11-01", purchase_date: null}),
+               (:Customer {name: "Jane Smith", enquiry_date: "2023-11-02", purchase_date: "2023-11-03"});
+
+        // Create Relationships
+        MATCH (c:Car {model: "Honda City"}), (s:Section {name: "Honda City Section"})
+        CREATE (c)-[:AVAILABLE_IN]->(s);
+
+        MATCH (c:Car {model: "Skoda"}), (s:Section {name: "Skoda Section"})
+        CREATE (c)-[:AVAILABLE_IN]->(s);
+
+        MATCH (c:Car {model: "Creta"}), (s:Section {name: "Creta Section"})
+        CREATE (c)-[:AVAILABLE_IN]->(s);
+
+        MATCH (c:Car {model: "Swift"}), (s:Section {name: "Swift Section"})
+        CREATE (c)-[:AVAILABLE_IN]->(s);
+
+        MATCH (c:Car {model: "Ertiga"}), (s:Section {name: "Ertiga Section"})
+        CREATE (c)-[:AVAILABLE_IN]->(s);
+
+        MATCH (staff:SalesStaff {name: "Mr. Narayan"}), (sec:Section {name: "Honda City Section"})
+        CREATE (staff)-[:HANDLES]->(sec);
+
+        MATCH (staff:SalesStaff {name: "Mr. Narayan"}), (sec:Section {name: "Skoda Section"})
+        CREATE (staff)-[:HANDLES]->(sec);
+
+        MATCH (staff:SalesStaff {name: "Ms. Singh"}), (sec:Section {name: "Creta Section"})
+        CREATE (staff)-[:HANDLES]->(sec);
+
+        MATCH (customer:Customer {name: "John Doe"}), (car:Car {model: "Swift"})
+        CREATE (customer)-[:ENQUIRED]->(car);
+
+        MATCH (customer:Customer {name: "Jane Smith"}), (car:Car {model: "Swift"})
+        CREATE (customer)-[:PURCHASED]->(car);
+        `;
+
+        const queries = {
+            listCarTypes: `
+            MATCH (c:Car)
+            RETURN DISTINCT c.type AS CarType;
+            `,
+            sectionsHandledByNarayan: `
+            MATCH (s:SalesStaff {name: "Mr. Narayan"})-[:HANDLES]->(sec:Section)
+            RETURN sec.name AS SectionName;
+            `,
+            enquiryButNoPurchase: `
+            MATCH (c:Customer)-[:ENQUIRED]->(car:Car)
+            WHERE c.purchase_date IS NULL
+            RETURN c.name AS CustomerName;
+            `,
+            highlySoldCarModel: `
+            MATCH (c:Car)<-[:PURCHASED]-(customer:Customer)
+            RETURN c.model AS CarModel, COUNT(customer) AS Sales
+            ORDER BY Sales DESC
+            LIMIT 1;
+            `,
+        };
+
+        console.log('Nodes Creation:');
+        console.log(createNodes);
+
+        console.log('Queries:');
+        console.log('a) List of car types available in the showroom:', queries.listCarTypes);
+        console.log('b) Sections handled by Mr. Narayan:', queries.sectionsHandledByNarayan);
+        console.log('c) Customers who enquired but didn\'t make any purchase:', queries.enquiryButNoPurchase);
+        console.log('d) Highly sold car model:', queries.highlySoldCarModel);
+    </script>
+
+</body>
+</html>

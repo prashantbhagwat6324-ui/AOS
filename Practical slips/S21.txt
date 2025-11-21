@@ -1,0 +1,261 @@
+Slip 21
+Q.1] Write a css3 script for the student registration form with appropriate message
+ display also high light compulsory fields in a different color 
+Model the following Medical information as a graph model, and answer the
+following queries using Cypher.
+There are various brands of medicine like Dr. Reddy, Cipla, SunPharma etc.
+Their uses vary across different states in India. The uses of medicine is
+measured as %, with a high use defined as >=90%, Medium Use between 50
+to 90%, and Low Use<50%. Each medicine manufactures various types of
+medicine products like Tablet, Syrup, and Powder etc.
+1. Identify the labels and relationships, along with their properties, and draw a
+high-level Graph model.  
+2. Create nodes and relationships, along with their properties, and visualize
+your actual Graph model.  
+3. Answer the following queries using Cypher:
+a. List the names of different medicines considered in your graph  
+b. List the medicine that are highly Used in Rajasthan.  
+c. List the highly used tablet in Gujarat.  
+d. List the medicine names manufacturing “Powder”
+Ans -
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Registration & Nursery Management</title>
+    <style>
+        /* Global Styles */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f9;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            height: 100vh;
+        }
+
+        h1 {
+            margin-bottom: 20px;
+        }
+
+        /* Progress Bar */
+        .progress-container {
+            width: 50%;
+            background-color: #ddd;
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 20px 0;
+        }
+
+        .progress-bar {
+            height: 30px;
+            width: 0%;
+            background-color: #4CAF50;
+            text-align: center;
+            line-height: 30px;
+            color: white;
+            font-weight: bold;
+        }
+
+        /* Form Styles */
+        .form-container {
+            width: 50%;
+            background-color: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+
+        /* Highlight compulsory fields */
+        .required {
+            border-color: #ff4d4d;
+            background-color: #ffe6e6;
+        }
+
+        /* Button */
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        /* Success Message */
+        #message {
+            margin-top: 20px;
+        }
+
+        .success {
+            color: green;
+            font-size: 18px;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Progress Bar Section -->
+    <div class="progress-container">
+        <div id="progressBar" class="progress-bar">0%</div>
+    </div>
+    <button onclick="startDownload()">Start Download</button>
+
+    <!-- Student Registration Form Section -->
+    <div class="form-container">
+        <h2>Student Registration Form</h2>
+        <form id="registrationForm">
+            <label for="name">Full Name:</label>
+            <input type="text" id="name" name="name" class="required" placeholder="Enter your full name" required>
+
+            <label for="email">Email:</label>
+            <input type="email" id="email" name="email" class="required" placeholder="Enter your email" required>
+
+            <label for="age">Age:</label>
+            <input type="number" id="age" name="age" placeholder="Enter your age">
+
+            <label for="gender">Gender:</label>
+            <select id="gender" name="gender" class="required">
+                <option value="">Select Gender</option>
+                <option value="Male">Male</option>
+                <option value="Female">Female</option>
+                <option value="Other">Other</option>
+            </select>
+
+            <label for="course">Course:</label>
+            <select id="course" name="course" class="required">
+                <option value="">Select a course</option>
+                <option value="Math">Mathematics</option>
+                <option value="Science">Science</option>
+                <option value="History">History</option>
+            </select>
+
+            <label for="comments">Comments:</label>
+            <textarea id="comments" name="comments" placeholder="Enter your comments"></textarea>
+
+            <button type="submit">Register</button>
+        </form>
+        <div id="message"></div>
+    </div>
+
+    <script>
+        // Progress Bar Logic
+        function startDownload() {
+            let progress = 0;
+            const progressBar = document.getElementById('progressBar');
+
+            const interval = setInterval(() => {
+                progress += 5;
+                progressBar.style.width = progress + '%';
+                progressBar.textContent = progress + '%';
+
+                // Stop at 100% and show alert
+                if (progress >= 100) {
+                    clearInterval(interval);
+                    alert('Download completed');
+                }
+            }, 1000); // Increment every second
+        }
+
+        // Student Registration Form Submission
+        const form = document.getElementById('registrationForm');
+        const message = document.getElementById('message');
+
+        form.addEventListener('submit', function(event) {
+            event.preventDefault();
+            message.innerHTML = "<p class='success'>Registration Successful!</p>";
+            form.reset();
+        });
+
+        // Neo4j Graph Model and Cypher Queries for Nursery Management
+        const createNodes = `
+        // Create Plants
+        CREATE (:Plant {name: "Rose", type: "Flowering", category: "Perennial", popularity: 90}),
+               (:Plant {name: "Tulip", type: "Flowering", category: "Seasonal", popularity: 80}),
+               (:Plant {name: "Money Plant", type: "Creeper", category: "Indoor", popularity: 70}),
+               (:Plant {name: "Aloe Vera", type: "Succulent", category: "Medicinal", popularity: 95}),
+               (:Plant {name: "Basil", type: "Herb", category: "Medicinal", popularity: 85});
+
+        // Create Fertilizers
+        CREATE (:Fertilizer {name: "Organic Fertilizer", category: "Natural"}),
+               (:Fertilizer {name: "Nitrogen Fertilizer", category: "Chemical"});
+
+        // Create Suppliers
+        CREATE (:Supplier {name: "Green Suppliers", rating: 5}),
+               (:Supplier {name: "Plant World", rating: 4}),
+               (:Supplier {name: "Flora Suppliers", rating: 3});
+
+        // Create Customers
+        CREATE (:Customer {name: "John Doe", purchase_date: "2023-11-23", recommendation_count: 10}),
+               (:Customer {name: "Jane Smith", purchase_date: "2023-11-24", recommendation_count: 5});
+
+        // Create Relationships
+        MATCH (c:Customer {name: "John Doe"}), (p:Plant {name: "Rose"})
+        CREATE (c)-[:PURCHASED {quantity: 300}]->(p);
+
+        MATCH (c:Customer {name: "Jane Smith"}), (p:Plant {name: "Tulip"})
+        CREATE (c)-[:PURCHASED {quantity: 500}]->(p);
+
+        MATCH (s:Supplier {name: "Green Suppliers"}), (p:Plant {name: "Money Plant"})
+        CREATE (s)-[:SUPPLIES]->(p);
+
+        MATCH (s:Supplier {name: "Plant World"}), (p:Plant {name: "Aloe Vera"})
+        CREATE (s)-[:SUPPLIES]->(p);
+
+        MATCH (s:Supplier {name: "Flora Suppliers"}), (p:Plant {name: "Rose"})
+        CREATE (s)-[:SUPPLIES]->(p);
+        `;
+
+        const queries = {
+            listCharacteristics: `
+            MATCH (l:Plant {name: "Rose"})
+            RETURN l.name AS PlantName, l.category AS Category, l.type AS Type, l.popularity AS Popularity;
+            `,
+            listFloweringPlants: `
+            MATCH (p:Plant {type: "Flowering"})
+            RETURN p.name AS PlantName, p.popularity AS Popularity
+            ORDER BY p.popularity DESC;
+            `,
+            listHighQtyPlants: `
+            MATCH (c:Customer)-[r:PURCHASED]->(p:Plant)
+            WHERE r.quantity > 500 AND c.purchase_date >= date("2023-11-22")
+            RETURN p.name AS PlantName, r.quantity AS Quantity, c.purchase_date AS PurchaseDate;
+            `,
+            listSuppliersForCreepers: `
+            MATCH (s:Supplier)-[:SUPPLIES]->(p:Plant {type: "Creeper"})
+            RETURN s.name AS SupplierName, s.rating AS Rating
+            ORDER BY s.rating DESC;
+            `,
+        };
+
+        console.log('Nodes Creation:');
+        console.log(createNodes);
+
+        console.log('Queries:');
+        console.log('a) Characteristics of a Plant:', queries.listCharacteristics);
+        console.log('b) Popular Flowering Plants:', queries.listFloweringPlants);
+        console.log('c) High Quantity Plants Sold:', queries.listHighQtyPlants);
+        console.log('d) Suppliers for Creepers:', queries.listSuppliersForCreepers);
+    </script>
+</body>
+</html>

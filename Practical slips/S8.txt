@@ -1,0 +1,109 @@
+Slip 8
+Q.1] Create a button with different style (Secondary, Primary, Success, Error, Info,
+Warning, Danger) using BootStrap 
+1. Model the following inventory information as a document database.
+The inventory keeps track of various items. The items are tagged in various
+categories. Items may be kept in various warehouses and each warehouse
+keeps track of the quantity of the item.
+2. Assume appropriate attributes and collections as per the query
+requirements 
+3. Insert at least 5 documents in each collection.  
+4. Answer the following Queries.
+a. List all the items qty is greater than 300  
+b. List all items which have tags less than 5  
+c. List all items having status equal to “B” or having quantity less than
+50 and height of the product should be greater than 8 
+d. Find all warehouse that keeps item “Planner” and having in
+stock quantity less than 20 
+Ans -
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bootstrap Buttons & Inventory Management</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container mt-5">
+        <!-- Bootstrap Buttons -->
+        <h2>Bootstrap Buttons</h2>
+        <button class="btn btn-primary">Primary Button</button>
+        <button class="btn btn-secondary">Secondary Button</button>
+        <button class="btn btn-success">Success Button</button>
+        <button class="btn btn-danger">Danger Button</button>
+        <button class="btn btn-info">Info Button</button>
+        <button class="btn btn-warning">Warning Button</button>
+    </div>
+
+    <!-- MongoDB Schema and Queries -->
+    <script>
+        // MongoDB Implementation
+
+        // Create collections for items, warehouses, and categories
+        db.createCollection("items");
+        db.createCollection("warehouses");
+        db.createCollection("categories");
+
+        // Insert data into Items collection
+        db.items.insertMany([
+            { name: "Planner", category: "Stationery", status: "A", quantity: 150, height: 10, tags: 4 },
+            { name: "Notebook", category: "Stationery", status: "B", quantity: 50, height: 8, tags: 3 },
+            { name: "Pen", category: "Stationery", status: "A", quantity: 500, height: 5, tags: 7 },
+            { name: "Lamp", category: "Furniture", status: "A", quantity: 200, height: 15, tags: 6 },
+            { name: "Chair", category: "Furniture", status: "B", quantity: 30, height: 12, tags: 2 }
+        ]);
+
+        // Insert data into Warehouses collection
+        db.warehouses.insertMany([
+            { warehouse_name: "Warehouse A", items: [{ name: "Planner", quantity: 50 }, { name: "Pen", quantity: 200 }] },
+            { warehouse_name: "Warehouse B", items: [{ name: "Notebook", quantity: 30 }, { name: "Lamp", quantity: 100 }] },
+            { warehouse_name: "Warehouse C", items: [{ name: "Chair", quantity: 20 }] },
+            { warehouse_name: "Warehouse D", items: [{ name: "Planner", quantity: 100 }, { name: "Lamp", quantity: 50 }] },
+            { warehouse_name: "Warehouse E", items: [{ name: "Pen", quantity: 300 }, { name: "Notebook", quantity: 20 }] }
+        ]);
+
+        // Insert data into Categories collection
+        db.categories.insertMany([
+            { category_name: "Stationery", description: "Items used for writing and organization" },
+            { category_name: "Furniture", description: "Items for home and office furniture" }
+        ]);
+
+        // Queries
+
+        // a) List all the items where quantity is greater than 300
+        db.items.find({ quantity: { $gt: 300 } }).forEach(function(doc) {
+            print(doc.name + " - Quantity: " + doc.quantity);
+        });
+
+        // b) List all items that have fewer than 5 tags
+        db.items.find({ tags: { $lt: 5 } }).forEach(function(doc) {
+            print(doc.name + " - Tags: " + doc.tags);
+        });
+
+        // c) List all items where status equals "B" or where the quantity is less than 50 and the height is greater than 8
+        db.items.find({
+            $or: [
+                { status: "B" },
+                { $and: [{ quantity: { $lt: 50 } }, { height: { $gt: 8 } }] }
+            ]
+        }).forEach(function(doc) {
+            print(doc.name + " - Status: " + doc.status + ", Quantity: " + doc.quantity + ", Height: " + doc.height);
+        });
+
+        // d) Find all warehouses that keep the item "Planner" and have stock quantity less than 20
+        db.warehouses.find({
+            "items.name": "Planner",
+            "items.quantity": { $lt: 20 }
+        }).forEach(function(doc) {
+            print(doc.warehouse_name);
+        });
+    </script>
+    
+    <!-- Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

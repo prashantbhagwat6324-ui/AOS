@@ -1,0 +1,235 @@
+Slip 7
+Q.1]Create a 3D text, apply appropriate font, style, color. Use : Hover in the 
+style selector so that the 3D effects appear only when you hover over
+the text 
+1. Model the following information as a document database.
+A customer operates his bank account, does various transactions and get
+the banking services
+2. Assume appropriate attributes and collections as per the query
+requirements.  
+3. Insert at least 5 documents in each collection.  
+4. Answer the following Queries.
+a. List names of all customers whose first name starts with a “S”  
+b. List all customers who has open an account on 1/1/2020 in ___branch 
+c. List the names customers where acctype=”Saving” 
+d. Count total no. of loan account holder of …….branch 
+Ans - 
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Banking Information & 3D Text</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        header {
+            background-color: #4CAF50;
+            padding: 20px;
+            text-align: center;
+            color: white;
+        }
+
+        header img {
+            width: 150px;
+            height: auto;
+        }
+
+        nav {
+            background-color: #333;
+            overflow: hidden;
+        }
+
+        nav a {
+            float: left;
+            display: block;
+            color: white;
+            padding: 14px 20px;
+            text-align: center;
+            text-decoration: none;
+        }
+
+        nav a:hover {
+            background-color: #ddd;
+            color: black;
+        }
+
+        .container {
+            padding: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        table, th, td {
+            border: 1px solid black;
+            padding: 10px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+
+        /* 3D Text Styling */
+        .text {
+            font-family: 'Arial', sans-serif;
+            font-size: 60px;
+            color: #333;
+            text-transform: uppercase;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            text-align: center;
+            margin-top: 50px;
+        }
+
+        /* 3D Effect on Hover */
+        .text:hover {
+            color: #ff6347; /* Tomato color when hovered */
+            text-shadow: 5px 5px 15px rgba(0, 0, 0, 0.3), 0 0 25px rgba(255, 99, 71, 0.5);
+            transform: rotateX(10deg) rotateY(10deg) scale(1.1);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header with Logo and Title -->
+    <header>
+        <img src="https://via.placeholder.com/150" alt="Company Logo">
+        <h1>Welcome to Banking Portal</h1>
+    </header>
+
+    <!-- Navigation Bar -->
+    <nav>
+        <a href="#home">Home</a>
+        <a href="#policies">Policies</a>
+        <a href="#customers">Customers</a>
+        <a href="#contact">Contact</a>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container">
+        <h2>Informative Text About Banking</h2>
+        <p>We offer a wide range of banking services, including savings, loans, and investment accounts. Manage your accounts with ease.</p>
+
+        <h3>Our Banking Services</h3>
+        <p>Explore various services that help secure your financial future. Whether you're looking for a saving account, a loan, or investment plans, we have it all.</p>
+
+        <h3>Customer Policy Details</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Customer Name</th>
+                    <th>Policy Type</th>
+                    <th>Premium Amount</th>
+                    <th>Policy Duration</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>John Doe</td>
+                    <td>Komal Jeevan</td>
+                    <td>15000</td>
+                    <td>1 Year</td>
+                </tr>
+                <tr>
+                    <td>Jane Smith</td>
+                    <td>Health Secure</td>
+                    <td>12000</td>
+                    <td>2 Years</td>
+                </tr>
+                <tr>
+                    <td>Robert Brown</td>
+                    <td>Komal Jeevan</td>
+                    <td>18000</td>
+                    <td>1 Year</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <!-- 3D Text -->
+        <div class="text">
+            Hover Over Me
+        </div>
+    </div>
+
+    <!-- MongoDB Schema and Queries -->
+    <script>
+        // MongoDB Backend Simulation: Assuming MongoDB is running and db variable is initialized
+
+        // Create collections for customers, accounts, transactions, and loans
+        db.createCollection("customers");
+        db.createCollection("accounts");
+        db.createCollection("transactions");
+        db.createCollection("loans");
+
+        // Insert customers
+        db.customers.insertMany([
+            { first_name: "Sam", last_name: "Smith", contact: "1234567890", email: "sam.smith@example.com" },
+            { first_name: "Sarah", last_name: "Jones", contact: "9876543210", email: "sarah.jones@example.com" },
+            { first_name: "John", last_name: "Doe", contact: "5432167890", email: "john.doe@example.com" },
+            { first_name: "Alice", last_name: "Williams", contact: "6598741230", email: "alice.williams@example.com" },
+            { first_name: "Steve", last_name: "Johnson", contact: "2143658790", email: "steve.johnson@example.com" }
+        ]);
+
+        // Insert accounts
+        db.accounts.insertMany([
+            { customer_name: "Sam Smith", acctype: "Saving", balance: 10000, branch: "Downtown", opened_on: new Date("2020-01-01") },
+            { customer_name: "Sarah Jones", acctype: "Current", balance: 20000, branch: "Uptown", opened_on: new Date("2020-01-15") },
+            { customer_name: "John Doe", acctype: "Saving", balance: 5000, branch: "Downtown", opened_on: new Date("2020-02-10") },
+            { customer_name: "Alice Williams", acctype: "Saving", balance: 15000, branch: "Midtown", opened_on: new Date("2020-03-05") },
+            { customer_name: "Steve Johnson", acctype: "Current", balance: 30000, branch: "Uptown", opened_on: new Date("2020-04-20") }
+        ]);
+
+        // Insert transactions
+        db.transactions.insertMany([
+            { customer_name: "Sam Smith", amount: 500, transaction_type: "Deposit", date: new Date("2020-01-02"), account_number: "12345" },
+            { customer_name: "Sarah Jones", amount: 1000, transaction_type: "Withdrawal", date: new Date("2020-01-16"), account_number: "23456" },
+            { customer_name: "John Doe", amount: 2000, transaction_type: "Deposit", date: new Date("2020-02-12"), account_number: "34567" },
+            { customer_name: "Alice Williams", amount: 1500, transaction_type: "Deposit", date: new Date("2020-03-06"), account_number: "45678" },
+            { customer_name: "Steve Johnson", amount: 5000, transaction_type: "Withdrawal", date: new Date("2020-04-21"), account_number: "56789" }
+        ]);
+
+        // Insert loans
+        db.loans.insertMany([
+            { customer_name: "Sam Smith", loan_type: "Personal", amount: 5000, branch: "Downtown", loan_taken_on: new Date("2020-02-01") },
+            { customer_name: "Sarah Jones", loan_type: "Home", amount: 100000, branch: "Uptown", loan_taken_on: new Date("2020-03-01") },
+            { customer_name: "John Doe", loan_type: "Car", amount: 15000, branch: "Downtown", loan_taken_on: new Date("2020-04-01") },
+            { customer_name: "Alice Williams", loan_type: "Personal", amount: 2000, branch: "Midtown", loan_taken_on: new Date("2020-04-10") },
+            { customer_name: "Steve Johnson", loan_type: "Home", amount: 75000, branch: "Uptown", loan_taken_on: new Date("2020-05-01") }
+        ]);
+
+        // Queries
+
+        // a) List names of all customers whose first name starts with “S”
+        db.customers.find({ first_name: /^S/ }).forEach(function(doc) {
+            print(doc.first_name + " " + doc.last_name);
+        });
+
+        // b) List all customers who have opened an account on 1/1/2020 in a specific branch
+        db.accounts.find({ opened_on: new Date("2020-01-01"), branch: "Downtown" }).forEach(function(doc) {
+            print(doc.customer_name);
+        });
+
+        // c) List the names of customers where acctype="Saving"
+        db.accounts.find({ acctype: "Saving" }).forEach(function(doc) {
+            print(doc.customer_name);
+        });
+
+        // d) Count total number of loan account holders in a specific branch
+        let branch = "Uptown";
+        let loanData = db.loans.find({ branch: branch }).toArray();
+        print("Total loan account holders in " + branch + ": " + loanData.length);
+    </script>
+
+</body>
+</html>
+

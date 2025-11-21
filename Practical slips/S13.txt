@@ -1,0 +1,239 @@
+Slip 13
+Q.1]  Create a useful web with the following information and structure using
+ HTML5 tags like:<header> , <footer>, <nav>, <aside>, <section> 
+1. Model the following Student Competition information as a document
+database. Consider Student competition information where the student can
+participate in many competitions.
+2. Assume appropriate attributes and collections as per the query
+requirements  
+3. Insert at least 10 documents in each collection.  
+4. Answer the following Queries.
+a. Display average no. of students participating in each competition. 
+b. Find the number of student for programming competition.  
+c. Display the names of first three winners of each competition.  
+d. Display students from class 'FY’ and participated in 'E-Rangoli '
+Competition. 
+Ans -
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Competition Portal</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f9;
+        }
+
+        header {
+            background-color: #4CAF50;
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+
+        nav {
+            background-color: #333;
+            color: white;
+            padding: 10px;
+            text-align: center;
+        }
+
+        nav a {
+            color: white;
+            margin: 0 15px;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        nav a:hover {
+            text-decoration: underline;
+        }
+
+        main {
+            display: flex;
+            padding: 20px;
+        }
+
+        aside {
+            width: 25%;
+            background-color: #f9f9f9;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        section {
+            width: 75%;
+            padding: 20px;
+        }
+
+        footer {
+            background-color: #333;
+            color: white;
+            text-align: center;
+            padding: 10px;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <h1>Welcome to Student Competition Portal</h1>
+    </header>
+
+    <!-- Navigation -->
+    <nav>
+        <a href="#home">Home</a>
+        <a href="#about">About</a>
+        <a href="#contact">Contact</a>
+    </nav>
+
+    <!-- Main Content -->
+    <main>
+        <!-- Sidebar -->
+        <aside>
+            <h2>Competitions</h2>
+            <ul>
+                <li>Programming</li>
+                <li>E-Rangoli</li>
+                <li>Quiz</li>
+                <li>Debate</li>
+                <li>Art</li>
+            </ul>
+        </aside>
+
+        <!-- Main Section -->
+        <section>
+            <h2>About Competitions</h2>
+            <p>Students from various classes participate in multiple competitions to showcase their skills and creativity. Explore the list of competitions and their winners here.</p>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <p>&copy; 2024 Student Competition Portal</p>
+    </footer>
+
+    <!-- MongoDB Schema and Queries -->
+    <script>
+        // MongoDB Implementation for Student Competition Portal
+
+        // Create collections for competitions, students, and participation
+        db.createCollection("competitions");
+        db.createCollection("students");
+        db.createCollection("participation");
+
+        // Insert Competitions
+        db.competitions.insertMany([
+            { competition_id: 1, name: "Programming", category: "Technical" },
+            { competition_id: 2, name: "E-Rangoli", category: "Art" },
+            { competition_id: 3, name: "Quiz", category: "Knowledge" },
+            { competition_id: 4, name: "Debate", category: "Communication" },
+            { competition_id: 5, name: "Art", category: "Creativity" }
+        ]);
+
+        // Insert Students
+        db.students.insertMany([
+            { student_id: 1, name: "John Doe", class: "FY" },
+            { student_id: 2, name: "Jane Smith", class: "SY" },
+            { student_id: 3, name: "Emily Johnson", class: "FY" },
+            { student_id: 4, name: "Michael Brown", class: "TY" },
+            { student_id: 5, name: "Sarah Lee", class: "FY" },
+            { student_id: 6, name: "James Wilson", class: "SY" },
+            { student_id: 7, name: "Sophia Taylor", class: "FY" },
+            { student_id: 8, name: "Daniel Davis", class: "TY" },
+            { student_id: 9, name: "Nancy White", class: "SY" },
+            { student_id: 10, name: "Chris Green", class: "FY" }
+        ]);
+
+        // Insert Participation
+        db.participation.insertMany([
+            { student_id: 1, competition_id: 1, position: 1 },
+            { student_id: 2, competition_id: 1, position: 2 },
+            { student_id: 3, competition_id: 1, position: 3 },
+            { student_id: 4, competition_id: 2, position: 1 },
+            { student_id: 5, competition_id: 2, position: 2 },
+            { student_id: 6, competition_id: 2, position: 3 },
+            { student_id: 7, competition_id: 3, position: 1 },
+            { student_id: 8, competition_id: 3, position: 2 },
+            { student_id: 9, competition_id: 3, position: 3 },
+            { student_id: 10, competition_id: 4, position: 1 }
+        ]);
+
+        // a) Display average number of students participating in each competition
+        db.participation.aggregate([
+            { $group: { _id: "$competition_id", avg_participants: { $avg: 1 } } },
+            {
+                $lookup: {
+                    from: "competitions",
+                    localField: "_id",
+                    foreignField: "competition_id",
+                    as: "competition_details"
+                }
+            },
+            { $unwind: "$competition_details" },
+            { $project: { competition: "$competition_details.name", avg_participants: 1 } }
+        ]).forEach(function(doc) {
+            print("Competition: " + doc.competition + ", Avg Participants: " + doc.avg_participants);
+        });
+
+        // b) Find the number of students for the programming competition
+        let programmingId = db.competitions.findOne({ name: "Programming" }).competition_id;
+        let count = db.participation.countDocuments({ competition_id: programmingId });
+        print("Number of students in Programming Competition: " + count);
+
+        // c) Display the names of the first three winners of each competition
+        db.participation.aggregate([
+            { $match: { position: { $lte: 3 } } },
+            {
+                $lookup: {
+                    from: "students",
+                    localField: "student_id",
+                    foreignField: "student_id",
+                    as: "student_details"
+                }
+            },
+            {
+                $lookup: {
+                    from: "competitions",
+                    localField: "competition_id",
+                    foreignField: "competition_id",
+                    as: "competition_details"
+                }
+            },
+            { $unwind: "$student_details" },
+            { $unwind: "$competition_details" },
+            { $project: { competition: "$competition_details.name", student: "$student_details.name", position: 1 } },
+            { $sort: { competition: 1, position: 1 } }
+        ]).forEach(function(doc) {
+            print("Competition: " + doc.competition + ", Winner: " + doc.student + ", Position: " + doc.position);
+        });
+
+        // d) Display students from class 'FY' and participated in 'E-Rangoli'
+        let rangoliId = db.competitions.findOne({ name: "E-Rangoli" }).competition_id;
+        db.participation.aggregate([
+            { $match: { competition_id: rangoliId } },
+            {
+                $lookup: {
+                    from: "students",
+                    localField: "student_id",
+                    foreignField: "student_id",
+                    as: "student_details"
+                }
+            },
+            { $unwind: "$student_details" },
+            { $match: { "student_details.class": "FY" } },
+            { $project: { student: "$student_details.name" } }
+        ]).forEach(function(doc) {
+            print("Student: " + doc.student);
+        });
+    </script>
+</body>
+</html>

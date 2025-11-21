@@ -1,0 +1,177 @@
+Slip 18
+Q.1] Create a web page, place an image in center and apply 2d transformation on
+ it. (rotation, scaling, translation) 
+Model the following Doctor’s information system as a graph model, and
+answer the following queries using Cypher.
+Consider the doctors in and around Pune. Each Doctor is specialized in
+some stream like Pediatric, Gynaec, Heart Specialist, Cancer Specialist,
+ENT, etc. A doctor may be a visiting doctor across many hospitals or he
+may own a clinic. A person can provide a review/can recommend a
+doctor.
+1. Identify the labels and relationships, along with their properties, and
+draw a high-level Graph model.  
+2. Create nodes and relationships, along with their properties, and
+visualize your actual Graph model.  
+3. Answer the Queries
+a. List the Orthopedic doctors in ……. Area.  
+b. List the doctors who has specialization in ____  
+c. List the most recommended Pediatrics in Seren Medows. 
+d. List all the who visits more than 2 hospitals
+Ans -
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Doctor's Information System & Transformations</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f9;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            height: 100vh;
+        }
+
+        h1 {
+            margin-bottom: 20px;
+        }
+
+        img {
+            width: 300px;
+            height: auto;
+            transition: transform 0.5s ease;
+        }
+
+        .rotate:hover {
+            transform: rotate(45deg);
+        }
+
+        .scale:hover {
+            transform: scale(1.5);
+        }
+
+        .translate:hover {
+            transform: translateX(50px);
+        }
+
+        button {
+            margin: 10px;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            background-color: #4CAF50;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <h1>Doctor's Information System & Image Transformations</h1>
+    <p>Hover over the image or use buttons to see transformations.</p>
+    <img id="image" src="https://via.placeholder.com/300" alt="Sample Image" class="rotate">
+    <div>
+        <button onclick="changeTransform('rotate')">Rotate</button>
+        <button onclick="changeTransform('scale')">Scale</button>
+        <button onclick="changeTransform('translate')">Translate</button>
+    </div>
+
+    <script>
+        function changeTransform(type) {
+            const img = document.getElementById('image');
+            img.className = type;
+        }
+    </script>
+
+    <!-- Neo4j Doctor's Information System -->
+    <script>
+        // Neo4j Graph Model and Cypher Queries
+
+        // Create Doctors
+        const createDoctors = `
+        CREATE (:Doctor {name: "Dr. Patel", specialization: "Orthopedic", area: "Kothrud"}),
+               (:Doctor {name: "Dr. Joshi", specialization: "Pediatric", area: "Seren Medows"}),
+               (:Doctor {name: "Dr. Mehta", specialization: "Heart Specialist", area: "Aundh"}),
+               (:Doctor {name: "Dr. Shah", specialization: "Orthopedic", area: "Baner"}),
+               (:Doctor {name: "Dr. Agarwal", specialization: "ENT", area: "Pimple Nilakh"});
+        `;
+
+        // Create Hospitals
+        const createHospitals = `
+        CREATE (:Hospital {name: "Seren Medows Hospital", area: "Seren Medows"}),
+               (:Hospital {name: "Kothrud Clinic", area: "Kothrud"}),
+               (:Hospital {name: "Aundh Medical Center", area: "Aundh"}),
+               (:Hospital {name: "Baner Health Center", area: "Baner"});
+        `;
+
+        // Create People
+        const createPeople = `
+        CREATE (:Person {name: "Ramesh", review: "Excellent", recommendation_count: 5}),
+               (:Person {name: "Suresh", review: "Good", recommendation_count: 3}),
+               (:Person {name: "Maya", review: "Outstanding", recommendation_count: 7});
+        `;
+
+        // Relationships
+        const createRelationships = `
+        MATCH (d:Doctor {name: "Dr. Patel"}), (h:Hospital {name: "Kothrud Clinic"})
+        CREATE (d)-[:VISITS]->(h);
+
+        MATCH (d:Doctor {name: "Dr. Joshi"}), (h:Hospital {name: "Seren Medows Hospital"})
+        CREATE (d)-[:VISITS]->(h);
+
+        MATCH (d:Doctor {name: "Dr. Mehta"}), (h:Hospital {name: "Aundh Medical Center"})
+        CREATE (d)-[:VISITS]->(h);
+
+        MATCH (d:Doctor {name: "Dr. Shah"}), (h:Hospital {name: "Baner Health Center"})
+        CREATE (d)-[:VISITS]->(h);
+
+        MATCH (p:Person {name: "Ramesh"}), (d:Doctor {name: "Dr. Joshi"})
+        CREATE (p)-[:RECOMMENDED]->(d);
+
+        MATCH (p:Person {name: "Maya"}), (d:Doctor {name: "Dr. Joshi"})
+        CREATE (p)-[:RECOMMENDED]->(d);
+
+        MATCH (p:Person {name: "Suresh"}), (d:Doctor {name: "Dr. Patel"})
+        CREATE (p)-[:RECOMMENDED]->(d);
+        `;
+
+        // a) List the Orthopedic doctors in a specific area
+        const queryOrthopedicDoctors = `
+        MATCH (d:Doctor {specialization: "Orthopedic", area: "Kothrud"})
+        RETURN d.name AS DoctorName, d.area AS Area;
+        `;
+
+        // b) List the doctors who have a specialization in a given field
+        const queryDoctorsBySpecialization = `
+        MATCH (d:Doctor {specialization: "Heart Specialist"})
+        RETURN d.name AS DoctorName, d.specialization AS Specialization;
+        `;
+
+        // c) List the most recommended Pediatric in Seren Medows
+        const queryMostRecommendedPediatric = `
+        MATCH (d:Doctor {specialization: "Pediatric", area: "Seren Medows"})<-[:RECOMMENDED]-(p:Person)
+        RETURN d.name AS DoctorName, COUNT(p) AS Recommendations
+        ORDER BY Recommendations DESC
+        LIMIT 1;
+        `;
+
+        // d) List all doctors who visit more than 2 hospitals
+        const queryDoctorsMoreThanTwoHospitals = `
+        MATCH (d:Doctor)-[:VISITS]->(h:Hospital)
+        WITH d, COUNT(h) AS HospitalCount
+        WHERE HospitalCount > 2
+        RETURN d.name AS DoctorName, HospitalCount;
+        `;
+    </script>
+</body>
+</html>

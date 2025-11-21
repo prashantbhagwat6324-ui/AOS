@@ -1,0 +1,116 @@
+Slip 11
+Q.1] Write a HTML code which will divide web page in three frames. First frame
+ should consists of company name as heading. Second frame should consists
+ of name of departments with hyperlink. Once click on any department, it
+ should display information of that department in third frame. 
+1. Model the following sales system as a document database. Consider a
+set of products, customers, orders and invoices. An invoice is generated
+when an order is processed.
+2. Assume appropriate attributes and collections as per the query
+requirements. 
+3. Insert at least 5 documents in each collection.  
+4. Answer the following Queries.
+a. List all products in the inventory. 
+b. List the details of orders with a value >20000.  
+c. List all the orders which has not been processed (invoice not
+generated) 
+d. List all the orders along with their invoice for “Mr. Rajiv”.
+Ans -
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Web Page with Frames & Sales System</title>
+</head>
+<body>
+    <frameset rows="20%, 80%" border="1">
+        <!-- First Frame: Company Name -->
+        <frame src="data:text/html,<html><head><title>Company</title></head><body style='text-align:center; font-family:Arial; font-size:24px; background-color:lightblue;'><h1>Welcome to ABC Corporation</h1></body></html>" name="topFrame">
+
+        <!-- Second Frame: Left and Right Frames -->
+        <frameset cols="30%, 70%">
+            <!-- Departments with hyperlinks -->
+            <frame src="data:text/html,<html><head><title>Departments</title></head><body style='font-family:Arial; font-size:18px;'><h2>Departments</h2><ul><li><a href='data:text/html,<html><head><title>HR</title></head><body style='font-family:Arial; font-size:18px;'><h2>Human Resources</h2><p>Our HR team focuses on employee recruitment, training, and welfare.</p></body></html>' target='rightFrame'>Human Resources</a></li><li><a href='data:text/html,<html><head><title>Sales</title></head><body style='font-family:Arial; font-size:18px;'><h2>Sales Department</h2><p>The Sales team drives our revenue through excellent customer engagement.</p></body></html>' target='rightFrame'>Sales</a></li><li><a href='data:text/html,<html><head><title>Tech</title></head><body style='font-family:Arial; font-size:18px;'><h2>Technical Support</h2><p>Our tech team ensures seamless product functionality and customer support.</p></body></html>' target='rightFrame'>Technical Support</a></li></ul></body></html>" name="leftFrame">
+
+            <!-- Dynamic content display for departments -->
+            <frame src="about:blank" name="rightFrame">
+        </frameset>
+    </frameset>
+
+    <!-- MongoDB Schema and Queries -->
+    <script>
+        // MongoDB Implementation for Sales System
+
+        // Create collections for products, customers, orders, and invoices
+        db.createCollection("products");
+        db.createCollection("customers");
+        db.createCollection("orders");
+        db.createCollection("invoices");
+
+        // Insert Products
+        db.products.insertMany([
+            { product_id: 1, name: "Laptop", price: 50000, stock: 10 },
+            { product_id: 2, name: "Smartphone", price: 20000, stock: 30 },
+            { product_id: 3, name: "Tablet", price: 15000, stock: 20 },
+            { product_id: 4, name: "Monitor", price: 10000, stock: 15 },
+            { product_id: 5, name: "Keyboard", price: 2000, stock: 50 }
+        ]);
+
+        // Insert Customers
+        db.customers.insertMany([
+            { customer_id: 1, name: "Mr. Rajiv", city: "Pune", contact: "1234567890" },
+            { customer_id: 2, name: "Ms. Priya", city: "Mumbai", contact: "9876543210" },
+            { customer_id: 3, name: "Mr. Sharma", city: "Delhi", contact: "4567891230" },
+            { customer_id: 4, name: "Ms. Neha", city: "Chennai", contact: "7891234560" },
+            { customer_id: 5, name: "Mr. Ali", city: "Kolkata", contact: "3216549870" }
+        ]);
+
+        // Insert Orders
+        db.orders.insertMany([
+            { order_id: 1, customer_id: 1, product_id: 1, quantity: 1, total_value: 50000, processed: true },
+            { order_id: 2, customer_id: 2, product_id: 2, quantity: 2, total_value: 40000, processed: false },
+            { order_id: 3, customer_id: 3, product_id: 3, quantity: 3, total_value: 45000, processed: true },
+            { order_id: 4, customer_id: 1, product_id: 4, quantity: 4, total_value: 40000, processed: true },
+            { order_id: 5, customer_id: 5, product_id: 5, quantity: 10, total_value: 20000, processed: false }
+        ]);
+
+        // Insert Invoices
+        db.invoices.insertMany([
+            { invoice_id: 1, order_id: 1, invoice_date: new Date("2023-11-01") },
+            { invoice_id: 2, order_id: 3, invoice_date: new Date("2023-11-03") },
+            { invoice_id: 3, order_id: 4, invoice_date: new Date("2023-11-05") }
+        ]);
+
+        // a) List all products in the inventory
+        db.products.find({}, { name: 1, price: 1, stock: 1 }).forEach(function(doc) {
+            print("Product: " + doc.name + ", Price: " + doc.price + ", Stock: " + doc.stock);
+        });
+
+        // b) List the details of orders with a value >20000
+        db.orders.find({ total_value: { $gt: 20000 } }).forEach(function(doc) {
+            print("Order ID: " + doc.order_id + ", Customer ID: " + doc.customer_id + ", Total Value: " + doc.total_value);
+        });
+
+        // c) List all the orders which have not been processed (invoice not generated)
+        db.orders.find({ processed: false }).forEach(function(doc) {
+            print("Order ID: " + doc.order_id + ", Customer ID: " + doc.customer_id + ", Total Value: " + doc.total_value);
+        });
+
+        // d) List all the orders along with their invoice for “Mr. Rajiv”
+        let customer = db.customers.findOne({ name: "Mr. Rajiv" });
+        db.orders.aggregate([
+            { $match: { customer_id: customer.customer_id } },
+            { $lookup: { from: "invoices", localField: "order_id", foreignField: "order_id", as: "invoice_details" } }
+        ]).forEach(function(order) {
+            print("Order ID: " + order.order_id + ", Total Value: " + order.total_value);
+            if (order.invoice_details.length > 0) {
+                print("Invoice ID: " + order.invoice_details[0].invoice_id + ", Date: " + order.invoice_details[0].invoice_date);
+            } else {
+                print("No Invoice Generated");
+            }
+        });
+    </script>
+</body>
+</html>

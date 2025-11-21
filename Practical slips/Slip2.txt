@@ -1,0 +1,108 @@
+Slip 2
+
+Q.1] Create a container add row inside it and add 3 columns inside row using
+ BootStrap. 
+i] Model the following system as a document database. 
+Consider a database of newspaper, publisher, and city.
+Different publisher publishes various newspapers in different cities
+ii] Assume appropriate attributes and collections as per the query 
+requirements.
+iii] Insert at least 5 documents in each collection
+iv] Answer the following Queries.
+ a] List all newspapers available “NASHIK” city
+ b] List all the newspaper of “Marathi” language 
+ c] Count no. of publishers of “Gujrat” state
+ d] Write a cursor to show newspapers with highest sale in Maharashtra
+State
+Ans -
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Newspaper System</title>
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+
+    <!-- Bootstrap Container with Row and 3 Columns -->
+    <div class="container mt-5">
+        <div class="row">
+            <!-- Column 1 -->
+            <div class="col-md-4">
+                <div class="p-3 border bg-light">Column 1</div>
+            </div>
+            <!-- Column 2 -->
+            <div class="col-md-4">
+                <div class="p-3 border bg-light">Column 2</div>
+            </div>
+            <!-- Column 3 -->
+            <div class="col-md-4">
+                <div class="p-3 border bg-light">Column 3</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS and dependencies -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    
+    <!-- MongoDB Schema and Queries (Embedded in a Script for Clarity) -->
+    <script>
+        // Assuming MongoDB is running and db variable is initialized
+
+        // Create collections for Publishers, Cities, and Newspapers
+        db.createCollection("publishers");
+        db.createCollection("cities");
+        db.createCollection("newspapers");
+
+        // Insert data into Publishers collection
+        db.publishers.insertMany([
+            { publisher_name: "Publisher A", state: "Maharashtra" },
+            { publisher_name: "Publisher B", state: "Gujrat" },
+            { publisher_name: "Publisher C", state: "Maharashtra" },
+            { publisher_name: "Publisher D", state: "Delhi" },
+            { publisher_name: "Publisher E", state: "Maharashtra" }
+        ]);
+
+        // Insert data into Cities collection
+        db.cities.insertMany([
+            { city_name: "Nashik" },
+            { city_name: "Mumbai" },
+            { city_name: "Pune" },
+            { city_name: "Delhi" },
+            { city_name: "Surat" }
+        ]);
+
+        // Insert data into Newspapers collection
+        db.newspapers.insertMany([
+            { newspaper_name: "Daily News", publisher_id: ObjectId("publisher_id_1"), city_id: ObjectId("city_id_1"), language: "Marathi", sales: 50000 },
+            { newspaper_name: "Times of India", publisher_id: ObjectId("publisher_id_2"), city_id: ObjectId("city_id_2"), language: "English", sales: 80000 },
+            { newspaper_name: "Marathi Times", publisher_id: ObjectId("publisher_id_3"), city_id: ObjectId("city_id_1"), language: "Marathi", sales: 45000 },
+            { newspaper_name: "Gujrat News", publisher_id: ObjectId("publisher_id_2"), city_id: ObjectId("city_id_5"), language: "Gujarati", sales: 30000 },
+            { newspaper_name: "Maharashtra Express", publisher_id: ObjectId("publisher_id_4"), city_id: ObjectId("city_id_1"), language: "Marathi", sales: 70000 }
+        ]);
+
+        // Query to List all newspapers available in "NASHIK" city
+        let city = db.cities.findOne({ city_name: "Nashik" });
+        db.newspapers.find({ city_id: city._id });
+
+        // Query to List all newspapers of "Marathi" language
+        db.newspapers.find({ language: "Marathi" });
+
+        // Query to Count the number of publishers in "Gujrat" state
+        let gujratPublishers = db.publishers.find({ state: "Gujrat" }).toArray();
+        let publisherCount = gujratPublishers.length;
+        console.log("Number of publishers in Gujrat: ", publisherCount);
+
+        // Query to Show newspapers with highest sales in Maharashtra
+        let maharashtraPublishers = db.publishers.find({ state: "Maharashtra" }).toArray();
+        let publisherIds = maharashtraPublishers.map(pub => pub._id);
+        db.newspapers.find({ publisher_id: { $in: publisherIds } }).sort({ sales: -1 }).limit(1);
+    </script>
+
+</body>
+</html>

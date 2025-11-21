@@ -1,0 +1,130 @@
+Slip 5
+Q.1] Write a HTML code, which generate the following output 
+ [ Apply border, border radius tags ]
+make a table name List of Persons of [[Sr. 1,2,3],[Person Name],[Age],[Country]]
+1. Model the following database. Many employees working on one project.
+A company has various ongoing projects.
+2. Assume appropriate attributes and collections as per the query
+requirements.  
+3. Insert at least 5 documents in each collection.  
+4. Answer the following Queries
+a. List all names of projects where Project_type =…..  
+b. List all the projects with duration greater than 3 months  
+c. Count no. of employees working on ……..project. 
+d. List the names of projects on which Mr. Patil is working 
+Ans -
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hospital Information System</title>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            border: 2px solid black;
+            border-radius: 10px;
+            margin-top: 20px;
+        }
+        th, td {
+            padding: 10px;
+            text-align: left;
+            border: 1px solid #ddd;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        table, th, td {
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Bootstrap Container with Table for Hospital Information -->
+    <div class="container mt-5">
+        <h2>List of Persons</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Sr. No.</th>
+                    <th>Person Name</th>
+                    <th>Age</th>
+                    <th>Country</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>1</td>
+                    <td>John Doe</td>
+                    <td>29</td>
+                    <td>USA</td>
+                </tr>
+                <tr>
+                    <td>2</td>
+                    <td>Jane Smith</td>
+                    <td>34</td>
+                    <td>Canada</td>
+                </tr>
+                <tr>
+                    <td>3</td>
+                    <td>Emily Johnson</td>
+                    <td>25</td>
+                    <td>UK</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Bootstrap JS and dependencies -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+    <!-- MongoDB Schema and Queries -->
+    <script>
+        // Assuming MongoDB is running and db variable is initialized
+
+        // Create collections for Employees and Projects
+        db.createCollection("employees");
+        db.createCollection("projects");
+
+        // Insert Employee Documents
+        db.employees.insertMany([
+            { name: "Mr. Patil", age: 35, department: "IT" },
+            { name: "Mr. Sharma", age: 40, department: "Finance" },
+            { name: "Ms. Gupta", age: 28, department: "HR" },
+            { name: "Mr. Joshi", age: 30, department: "Marketing" },
+            { name: "Mr. Verma", age: 32, department: "IT" }
+        ]);
+
+        // Insert Project Documents
+        db.projects.insertMany([
+            { name: "Project A", project_type: "Software", duration: 6, employees: ["Mr. Patil", "Mr. Sharma"] },
+            { name: "Project B", project_type: "Hardware", duration: 12, employees: ["Ms. Gupta", "Mr. Joshi"] },
+            { name: "Project C", project_type: "Software", duration: 3, employees: ["Mr. Patil", "Mr. Verma"] },
+            { name: "Project D", project_type: "Marketing", duration: 4, employees: ["Mr. Sharma", "Mr. Joshi"] },
+            { name: "Project E", project_type: "HR", duration: 9, employees: ["Ms. Gupta", "Mr. Verma"] }
+        ]);
+
+        // MongoDB Queries for Project Data
+        db.projects.find({ project_type: "Software" }).forEach(function(doc) {
+            print(doc.name);
+        });
+
+        db.projects.find({ duration: { $gt: 3 } }).forEach(function(doc) {
+            print(doc.name);
+        });
+
+        let projectA = db.projects.findOne({ name: "Project A" });
+        print("Employees working on Project A: ", projectA.employees.length);
+
+        db.projects.find({ employees: "Mr. Patil" }).forEach(function(doc) {
+            print(doc.name);
+        });
+    </script>
+
+</body>
+</html>

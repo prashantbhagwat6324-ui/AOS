@@ -1,0 +1,137 @@
+Slip 14
+Q.1] Design an HTML form to take the information of a customer for booking a
+travel plan consisting of fields such as name, address, contact no., gender,
+preferred season(Checkboxes), location type(to be selected from a list) etc.
+You should provide button to submit as well as reset the form contents 
+Model the following system as a graph model, and answer the queries using
+Cypher.
+Government provides various scholarships for students. A students apply for
+scholarship. Student can get benefits of more than one scholarship if satisfies
+the criteria. Student can recommend it for his friends or other family members
+1. Identify the labels and relationships, along with their properties, and
+draw a high-level Graph model. [3]
+2. Create nodes and relationships, along with their properties, and visualize
+your actual Graph model.
+3. Answer the following Queries in Cypher:
+a. List the names of scholarship for OBC category. 
+b. Count no. of students who are benefitted by ____ scholarship in year
+2020-2021  
+c. Update the income limit for _____scholarship.  
+d. List the most popular scholarship. 
+Ans -
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Travel Plan Booking</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f9;
+        }
+
+        .container {
+            width: 50%;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #ffffff;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            margin-top: 50px;
+        }
+
+        h2 {
+            text-align: center;
+            color: #333;
+        }
+
+        label {
+            font-weight: bold;
+            margin-top: 10px;
+            display: block;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 10px;
+            margin: 5px 0 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+
+        input[type="checkbox"] {
+            width: auto;
+            margin-right: 10px;
+        }
+
+        button {
+            padding: 10px 20px;
+            margin: 10px 5px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .submit-btn {
+            background-color: #4CAF50;
+            color: white;
+        }
+
+        .reset-btn {
+            background-color: #f44336;
+            color: white;
+        }
+
+        button:hover {
+            opacity: 0.9;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Travel Plan Booking</h2>
+        <form>
+            <label for="name">Full Name:</label>
+            <input type="text" id="name" name="name" placeholder="Enter your full name" required>
+
+            <label for="address">Address:</label>
+            <input type="text" id="address" name="address" placeholder="Enter your address" required>
+
+            <label for="contact">Contact Number:</label>
+            <input type="tel" id="contact" name="contact" placeholder="Enter your contact number" required>
+
+            <label for="gender">Gender:</label>
+            <select id="gender" name="gender" required>
+                <option value="Male">Male</option>
+                <option value="Female">Female</option>
+                <option value="Other">Other</option>
+            </select>
+
+            <label>Preferred Season:</label>
+            <input type="checkbox" id="summer" name="season" value="Summer">
+            <label for="summer" style="display:inline;">Summer</label>
+            <input type="checkbox" id="winter" name="season" value="Winter">
+            <label for="winter" style="display:inline;">Winter</label>
+            <input type="checkbox" id="monsoon" name="season" value="Monsoon">
+            <label for="monsoon" style="display:inline;">Monsoon</label>
+
+            <label for="location">Location Type:</label>
+            <select id="location" name="location" required>
+                <option value="Beach">Beach</option>
+                <option value="Mountain">Mountain</option>
+                <option value="City">City</option>
+                <option value="Forest">Forest</option>
+            </select>
+
+            <button type="submit" class="submit-btn">Submit</button>
+            <button type="reset" class="reset-btn">Reset</button>
+        </form>
+    </div>
+</body>
+</html>

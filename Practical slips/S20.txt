@@ -1,0 +1,179 @@
+Slip 20
+Q.1] Create a web page , show a button with a text “start download” , when click in
+ start download a progress bar must be initialized with value 0 then increase by
+ 5 in each second then at the end of downloading process alert the message
+“Download completed” 
+Model the following nursery management information as a graph model,
+and answer the following queries using Cypher.
+Nursery content various types of plants, fertilizers and required products.
+Customer visit the nursery or use an app , purchase the plants and necessary
+products also rate and recommend the app
+1. Identify the labels and relationships, along with their properties, and
+draw a high-level Graph model.  
+2. Create nodes and relationships, along with their properties, and
+visualize your actual Graph model.  
+3. Answer the following queries using Cypher:
+a. List the types of plants from your graph model  
+b. List the popular flowering plants.  
+c. List the names of plants sold plant where qty>500 in last 2 days  
+d. List the names of suppliers in decreasing order who supplies
+“Creepers”.
+Ans -
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nursery Management & Download Progress</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f9;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            height: 100vh;
+        }
+
+        h1 {
+            margin-bottom: 20px;
+        }
+
+        .progress-container {
+            width: 50%;
+            background-color: #ddd;
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 20px 0;
+        }
+
+        .progress-bar {
+            height: 30px;
+            width: 0%;
+            background-color: #4CAF50;
+            text-align: center;
+            line-height: 30px;
+            color: white;
+            font-weight: bold;
+        }
+
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <h1>Nursery Management & Download Progress</h1>
+
+    <!-- Progress Bar -->
+    <div class="progress-container">
+        <div id="progressBar" class="progress-bar">0%</div>
+    </div>
+
+    <button onclick="startDownload()">Start Download</button>
+
+    <script>
+        function startDownload() {
+            let progress = 0;
+            const progressBar = document.getElementById('progressBar');
+
+            const interval = setInterval(() => {
+                progress += 5;
+                progressBar.style.width = progress + '%';
+                progressBar.textContent = progress + '%';
+
+                // Stop at 100% and show alert
+                if (progress >= 100) {
+                    clearInterval(interval);
+                    alert('Download completed');
+                }
+            }, 1000); // Increment every second
+        }
+
+        // Neo4j Graph Model and Cypher Queries for Nursery Management
+
+        const createNodes = `
+        // Create Plants
+        CREATE (:Plant {name: "Rose", type: "Flowering", category: "Perennial", popularity: 90}),
+               (:Plant {name: "Tulip", type: "Flowering", category: "Seasonal", popularity: 80}),
+               (:Plant {name: "Money Plant", type: "Creeper", category: "Indoor", popularity: 70}),
+               (:Plant {name: "Aloe Vera", type: "Succulent", category: "Medicinal", popularity: 95}),
+               (:Plant {name: "Basil", type: "Herb", category: "Medicinal", popularity: 85});
+
+        // Create Fertilizers
+        CREATE (:Fertilizer {name: "Organic Fertilizer", category: "Natural"}),
+               (:Fertilizer {name: "Nitrogen Fertilizer", category: "Chemical"});
+
+        // Create Suppliers
+        CREATE (:Supplier {name: "Green Suppliers", rating: 5}),
+               (:Supplier {name: "Plant World", rating: 4}),
+               (:Supplier {name: "Flora Suppliers", rating: 3});
+
+        // Create Customers
+        CREATE (:Customer {name: "John Doe", purchase_date: "2023-11-23", recommendation_count: 10}),
+               (:Customer {name: "Jane Smith", purchase_date: "2023-11-24", recommendation_count: 5});
+
+        // Create Relationships
+        MATCH (c:Customer {name: "John Doe"}), (p:Plant {name: "Rose"})
+        CREATE (c)-[:PURCHASED {quantity: 300}]->(p);
+
+        MATCH (c:Customer {name: "Jane Smith"}), (p:Plant {name: "Tulip"})
+        CREATE (c)-[:PURCHASED {quantity: 500}]->(p);
+
+        MATCH (s:Supplier {name: "Green Suppliers"}), (p:Plant {name: "Money Plant"})
+        CREATE (s)-[:SUPPLIES]->(p);
+
+        MATCH (s:Supplier {name: "Plant World"}), (p:Plant {name: "Aloe Vera"})
+        CREATE (s)-[:SUPPLIES]->(p);
+
+        MATCH (s:Supplier {name: "Flora Suppliers"}), (p:Plant {name: "Rose"})
+        CREATE (s)-[:SUPPLIES]->(p);
+        `;
+
+        const queries = {
+            listCharacteristics: `
+            MATCH (l:Plant {name: "Rose"})
+            RETURN l.name AS PlantName, l.category AS Category, l.type AS Type, l.popularity AS Popularity;
+            `,
+            listFloweringPlants: `
+            MATCH (p:Plant {type: "Flowering"})
+            RETURN p.name AS PlantName, p.popularity AS Popularity
+            ORDER BY p.popularity DESC;
+            `,
+            listHighQtyPlants: `
+            MATCH (c:Customer)-[r:PURCHASED]->(p:Plant)
+            WHERE r.quantity > 500 AND c.purchase_date >= date("2023-11-22")
+            RETURN p.name AS PlantName, r.quantity AS Quantity, c.purchase_date AS PurchaseDate;
+            `,
+            listSuppliersForCreepers: `
+            MATCH (s:Supplier)-[:SUPPLIES]->(p:Plant {type: "Creeper"})
+            RETURN s.name AS SupplierName, s.rating AS Rating
+            ORDER BY s.rating DESC;
+            `,
+        };
+
+        console.log('Nodes Creation:');
+        console.log(createNodes);
+
+        console.log('Queries:');
+        console.log('a) Characteristics of a Plant:', queries.listCharacteristics);
+        console.log('b) Popular Flowering Plants:', queries.listFloweringPlants);
+        console.log('c) High Quantity Plants Sold:', queries.listHighQtyPlants);
+        console.log('d) Suppliers for Creepers:', queries.listSuppliersForCreepers);
+    </script>
+</body>
+</html>

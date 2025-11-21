@@ -1,0 +1,153 @@
+Slip 4
+Q.1 Write a bootstrap program for the following
+“The .table class adds basic styling (light padding and only horizontal
+dividers) to a table” The table can have the first name, last name, and email
+id as columns
+1. Model the following information system as a document database.
+Consider hospitals around Nashik. Each hospital may have one or more
+specializations like Pediatric, Gynaec, Orthopedic, etc. A person can
+recommend/provide review for a hospital. A doctor can give service to one
+or more hospitals.
+2. Assume appropriate attributes and collections as per the query
+requirements. 
+3. Insert at least 10 documents in each collection.
+4. Answer the following Queries
+a. List the names of hospitals with………… specialization. 
+b. List the Names of all hospital located in ……. city 
+c. List the names of hospitals where Dr. Deshmukh visits 
+d. List the names of hospitals whose rating >=4 
+Ans -
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hospital Information System</title>
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+
+    <!-- Bootstrap Container with Table for Hospital Information -->
+    <div class="container mt-5">
+        <h2>Hospital Information</h2>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>First Name</th>
+                    <th>Last Name</th>
+                    <th>Email ID</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>John</td>
+                    <td>Doe</td>
+                    <td>john.doe@example.com</td>
+                </tr>
+                <tr>
+                    <td>Jane</td>
+                    <td>Smith</td>
+                    <td>jane.smith@example.com</td>
+                </tr>
+                <tr>
+                    <td>Emily</td>
+                    <td>Johnson</td>
+                    <td>emily.johnson@example.com</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Bootstrap JS and dependencies -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+    <!-- MongoDB Schema and Queries -->
+    <script>
+        // Assuming MongoDB is running and db variable is initialized
+
+        // Create collections for Hospitals, Specializations, Doctors, and Reviews
+        db.createCollection("hospitals");
+        db.createCollection("specializations");
+        db.createCollection("doctors");
+        db.createCollection("reviews");
+
+        // Insert data into Hospitals collection
+        db.hospitals.insertMany([
+            { name: "City Hospital", city: "Nashik", rating: 4.5 },
+            { name: "Serene Medical", city: "Mumbai", rating: 3.8 },
+            { name: "Sunshine Clinic", city: "Nashik", rating: 4.1 },
+            { name: "CureWell Hospital", city: "Pune", rating: 4.7 },
+            { name: "HealthPlus", city: "Delhi", rating: 3.9 },
+            { name: "Orthopedic Center", city: "Nashik", rating: 4.2 },
+            { name: "Pediatric Care", city: "Mumbai", rating: 4.8 },
+            { name: "Gynaec Clinic", city: "Nashik", rating: 4.3 },
+            { name: "Dr. Care", city: "Delhi", rating: 4.0 },
+            { name: "Complete Health", city: "Nashik", rating: 4.4 }
+        ]);
+
+        // Insert data into Specializations collection
+        db.specializations.insertMany([
+            { hospital_name: "City Hospital", specialization: "Pediatric" },
+            { hospital_name: "Serene Medical", specialization: "Gynaec" },
+            { hospital_name: "Sunshine Clinic", specialization: "Orthopedic" },
+            { hospital_name: "CureWell Hospital", specialization: "Pediatric" },
+            { hospital_name: "HealthPlus", specialization: "Gynaec" },
+            { hospital_name: "Orthopedic Center", specialization: "Orthopedic" },
+            { hospital_name: "Pediatric Care", specialization: "Pediatric" },
+            { hospital_name: "Gynaec Clinic", specialization: "Gynaec" },
+            { hospital_name: "Dr. Care", specialization: "Orthopedic" },
+            { hospital_name: "Complete Health", specialization: "Pediatric" }
+        ]);
+
+        // Insert data into Doctors collection
+        db.doctors.insertMany([
+            { name: "Dr. Deshmukh", specialization: "Orthopedic", hospitals: ["City Hospital", "CureWell Hospital"] },
+            { name: "Dr. Sharma", specialization: "Pediatric", hospitals: ["Sunshine Clinic", "Pediatric Care"] },
+            { name: "Dr. Gupta", specialization: "Gynaec", hospitals: ["Serene Medical", "Gynaec Clinic"] },
+            { name: "Dr. Patil", specialization: "Orthopedic", hospitals: ["Orthopedic Center"] },
+            { name: "Dr. Joshi", specialization: "Pediatric", hospitals: ["Complete Health", "CureWell Hospital"] }
+        ]);
+
+        // Insert data into Reviews collection
+        db.reviews.insertMany([
+            { hospital_name: "City Hospital", reviewer: "John", rating: 5, comment: "Excellent service!" },
+            { hospital_name: "Serene Medical", reviewer: "Jane", rating: 3, comment: "Okay, but can be improved." },
+            { hospital_name: "Sunshine Clinic", reviewer: "Emily", rating: 4, comment: "Great orthopedic care." },
+            { hospital_name: "CureWell Hospital", reviewer: "Michael", rating: 4, comment: "Good service, but wait times are long." },
+            { hospital_name: "HealthPlus", reviewer: "Sarah", rating: 3.5, comment: "Decent, but not the best." },
+            { hospital_name: "Orthopedic Center", reviewer: "Ravi", rating: 4.5, comment: "Best orthopedic specialists!" },
+            { hospital_name: "Pediatric Care", reviewer: "Aditi", rating: 5, comment: "Highly recommend for kids!" },
+            { hospital_name: "Gynaec Clinic", reviewer: "Kiran", rating: 4, comment: "Excellent women's health clinic." },
+            { hospital_name: "Dr. Care", reviewer: "Shivani", rating: 4.2, comment: "Great care from the doctors." },
+            { hospital_name: "Complete Health", reviewer: "Manoj", rating: 4.5, comment: "Very good pediatric care." }
+        ]);
+
+        // Queries
+
+        // a) List the names of hospitals with specialization "Pediatric"
+        db.specializations.find({ specialization: "Pediatric" }).forEach(function(doc) {
+            print(doc.hospital_name);
+        });
+
+        // b) List the names of all hospitals located in Nashik
+        db.hospitals.find({ city: "Nashik" }).forEach(function(doc) {
+            print(doc.name);
+        });
+
+        // c) List the names of hospitals where Dr. Deshmukh visits
+        let drDeshmukhHospitals = db.doctors.findOne({ name: "Dr. Deshmukh" }).hospitals;
+        print("Hospitals where Dr. Deshmukh visits:");
+        drDeshmukhHospitals.forEach(function(hospital) {
+            print(hospital);
+        });
+
+        // d) List the names of hospitals whose rating >= 4
+        db.hospitals.find({ rating: { $gte: 4 } }).forEach(function(doc) {
+            print(doc.name);
+        });
+    </script>
+
+</body>
+</html>

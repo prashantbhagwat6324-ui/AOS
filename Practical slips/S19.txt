@@ -1,0 +1,174 @@
+Slip 19
+Q.1] Create a web page in which show a button with a text “start download” ,
+ when click in start download a progress bar must be initialized with value 0
+ then increase by 10 in each second, change the color of progress bar after
+ every three seconds.
+Model the following Laptop manufacturing information system as a
+graph model, and answer the following queries using Cypher.
+Consider an Laptop manufacturing industries which produces different
+types of laptops. A customer can buy a laptop, recommend or rate a the
+product.
+1. Identify the labels and relationships, along with their properties, and
+draw a high-level Graph model.  
+2. Create nodes and relationships, along with their properties, and
+visualize your actual Graph model. 
+3. Answer the Queries
+a. List the characteristics of…….. laptop.  
+b. List the name of customers who bought a “DELL” company
+laptop  
+c. List the customers who purchase a device on “26/01/2023”  
+d. List the most recommended device.
+Ans -
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Laptop System & Progress Bar</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f9;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            height: 100vh;
+        }
+
+        h1 {
+            margin-bottom: 20px;
+        }
+
+        .progress-container {
+            width: 50%;
+            background-color: #ddd;
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 20px 0;
+        }
+
+        .progress-bar {
+            height: 30px;
+            width: 0%;
+            text-align: center;
+            line-height: 30px;
+            color: white;
+            font-weight: bold;
+        }
+
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <h1>Laptop System & Download Progress</h1>
+    <div class="progress-container">
+        <div id="progressBar" class="progress-bar">0%</div>
+    </div>
+    <button onclick="startDownload()">Start Download</button>
+
+    <script>
+        function startDownload() {
+            let progress = 0;
+            const progressBar = document.getElementById('progressBar');
+            const colors = ['#4CAF50', '#FF9800', '#2196F3']; // Green, Orange, Blue
+            let colorIndex = 0;
+
+            const interval = setInterval(() => {
+                progress += 10;
+                progressBar.style.width = progress + '%';
+                progressBar.textContent = progress + '%';
+
+                // Change color every 3 seconds (every 3 increments)
+                if (progress % 30 === 0) {
+                    progressBar.style.backgroundColor = colors[colorIndex];
+                    colorIndex = (colorIndex + 1) % colors.length;
+                }
+
+                // Stop when progress reaches 100%
+                if (progress >= 100) {
+                    clearInterval(interval);
+                }
+            }, 1000); // Increase every second
+        }
+
+        // Neo4j Graph Model and Cypher Queries for Laptop System
+
+        const createNodes = `
+        // Create Laptops
+        CREATE (:Laptop {name: "Inspiron 15", manufacturer: "DELL", characteristics: ["i7 Processor", "16GB RAM", "512GB SSD"]}),
+               (:Laptop {name: "MacBook Air", manufacturer: "Apple", characteristics: ["M1 Chip", "8GB RAM", "256GB SSD"]}),
+               (:Laptop {name: "ThinkPad X1", manufacturer: "Lenovo", characteristics: ["i5 Processor", "8GB RAM", "1TB HDD"]}),
+               (:Laptop {name: "Pavilion", manufacturer: "HP", characteristics: ["Ryzen 5", "8GB RAM", "256GB SSD"]});
+
+        // Create Customers
+        CREATE (:Customer {name: "John Doe", purchase_date: "2023-01-26", rating: 5}),
+               (:Customer {name: "Jane Smith", purchase_date: "2023-02-10", rating: 4}),
+               (:Customer {name: "Emily Johnson", purchase_date: "2023-01-26", rating: 5}),
+               (:Customer {name: "Michael Brown", purchase_date: "2023-03-05", rating: 3}),
+               (:Customer {name: "Sarah Lee", purchase_date: "2023-01-26", rating: 4});
+
+        // Create Relationships
+        MATCH (c:Customer {name: "John Doe"}), (l:Laptop {name: "Inspiron 15"})
+        CREATE (c)-[:PURCHASED]->(l);
+
+        MATCH (c:Customer {name: "Jane Smith"}), (l:Laptop {name: "MacBook Air"})
+        CREATE (c)-[:PURCHASED]->(l);
+
+        MATCH (c:Customer {name: "Emily Johnson"}), (l:Laptop {name: "ThinkPad X1"})
+        CREATE (c)-[:PURCHASED]->(l);
+
+        MATCH (c:Customer {name: "Michael Brown"}), (l:Laptop {name: "Pavilion"})
+        CREATE (c)-[:PURCHASED]->(l);
+
+        MATCH (c:Customer {name: "Sarah Lee"}), (l:Laptop {name: "Inspiron 15"})
+        CREATE (c)-[:RECOMMENDED]->(l);
+        `;
+
+        const queries = {
+            listCharacteristics: `
+            MATCH (l:Laptop {name: "Inspiron 15"})
+            RETURN l.name AS LaptopName, l.characteristics AS Characteristics;
+            `,
+            listDellCustomers: `
+            MATCH (c:Customer)-[:PURCHASED]->(l:Laptop {manufacturer: "DELL"})
+            RETURN c.name AS CustomerName, l.name AS LaptopName;
+            `,
+            customersByDate: `
+            MATCH (c:Customer {purchase_date: "2023-01-26"})-[:PURCHASED]->(l:Laptop)
+            RETURN c.name AS CustomerName, l.name AS LaptopName;
+            `,
+            mostRecommended: `
+            MATCH (c:Customer)-[:RECOMMENDED]->(l:Laptop)
+            RETURN l.name AS LaptopName, COUNT(c) AS RecommendationCount
+            ORDER BY RecommendationCount DESC
+            LIMIT 1;
+            `,
+        };
+
+        console.log('Nodes Creation:');
+        console.log(createNodes);
+
+        console.log('Queries:');
+        console.log('a) Characteristics of a Laptop:', queries.listCharacteristics);
+        console.log('b) Customers who bought DELL laptops:', queries.listDellCustomers);
+        console.log('c) Customers who purchased devices on 26/01/2023:', queries.customersByDate);
+        console.log('d) Most Recommended Device:', queries.mostRecommended);
+    </script>
+</body>
+</html>

@@ -1,0 +1,175 @@
+Slip 9
+Q.1] Write an HTML 5 program for student registration form for college 
+admission. Use input type like search, email, date etc 
+1. Model the following Customer Loan information as a document database.
+ Consider Customer Loan information system where the customer can take
+ many types of loans.
+2. Assume appropriate attributes and collections as per the query
+requirements  
+ 3. Insert at least 10 documents in each collection.  
+ 4. Answer the following Queries.
+a. List all customers whose name starts with 'D' character  
+b.List the names of customer in descending order who has taken a loan
+from Pimpri city.  
+c.Display customer details having maximum loan amount.  
+d.Update the address of customer whose name is “Mr. Patil” and
+loan_amt is greater than 100000. 
+Ans -
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Registration and Customer Loan Management</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f9;
+        }
+
+        .container {
+            width: 50%;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #ffffff;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            margin-top: 50px;
+        }
+
+        h2 {
+            text-align: center;
+            color: #333;
+        }
+
+        label {
+            font-weight: bold;
+            margin-top: 10px;
+            display: block;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 10px;
+            margin: 5px 0 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+
+        input[type="submit"] {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        input[type="submit"]:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <!-- HTML Student Registration Form -->
+    <div class="container">
+        <h2>Student Registration Form</h2>
+        <form action="#" method="POST">
+            <label for="fullname">Full Name:</label>
+            <input type="text" id="fullname" name="fullname" placeholder="Enter your full name" required>
+
+            <label for="dob">Date of Birth:</label>
+            <input type="date" id="dob" name="dob" required>
+
+            <label for="email">Email:</label>
+            <input type="email" id="email" name="email" placeholder="Enter your email" required>
+
+            <label for="phone">Phone Number:</label>
+            <input type="tel" id="phone" name="phone" placeholder="Enter your phone number" required>
+
+            <label for="address">Address:</label>
+            <input type="search" id="address" name="address" placeholder="Enter your address">
+
+            <label for="course">Course:</label>
+            <select id="course" name="course" required>
+                <option value="B.Sc">B.Sc</option>
+                <option value="B.Com">B.Com</option>
+                <option value="B.Tech">B.Tech</option>
+                <option value="MBA">MBA</option>
+            </select>
+
+            <label for="gender">Gender:</label>
+            <select id="gender" name="gender" required>
+                <option value="Male">Male</option>
+                <option value="Female">Female</option>
+                <option value="Other">Other</option>
+            </select>
+
+            <input type="submit" value="Register">
+        </form>
+    </div>
+
+    <!-- MongoDB Schema and Queries -->
+    <script>
+        // MongoDB Implementation for Customer Loan Information
+
+        // Create collections for customers and loans
+        db.createCollection("customers");
+        db.createCollection("loans");
+
+        // Insert Customer Documents
+        db.customers.insertMany([
+            { name: "David Brown", address: "123 Elm St", city: "Pimpri", phone: "1234567890" },
+            { name: "Diana Johnson", address: "456 Maple Ave", city: "Nashik", phone: "9876543210" },
+            { name: "Daniel Smith", address: "789 Oak Rd", city: "Pimpri", phone: "6549873210" },
+            { name: "John Doe", address: "321 Pine St", city: "Mumbai", phone: "3216549870" },
+            { name: "Emily Clark", address: "654 Cedar Ln", city: "Pimpri", phone: "7896541230" },
+            { name: "Mr. Patil", address: "789 Spruce Dr", city: "Pune", phone: "5678901234" },
+            { name: "Sophia Taylor", address: "159 Birch St", city: "Nashik", phone: "4567891230" },
+            { name: "James Wilson", address: "753 Ash Ct", city: "Pimpri", phone: "2345678901" },
+            { name: "Derek Anderson", address: "951 Willow Pl", city: "Pimpri", phone: "3456789012" },
+            { name: "Nancy Lee", address: "852 Chestnut St", city: "Mumbai", phone: "1230987654" }
+        ]);
+
+        // Insert Loan Documents
+        db.loans.insertMany([
+            { customer_name: "David Brown", loan_type: "Personal", loan_amt: 50000, branch: "Pimpri" },
+            { customer_name: "Diana Johnson", loan_type: "Home", loan_amt: 100000, branch: "Nashik" },
+            { customer_name: "Daniel Smith", loan_type: "Car", loan_amt: 200000, branch: "Pimpri" },
+            { customer_name: "John Doe", loan_type: "Personal", loan_amt: 150000, branch: "Mumbai" },
+            { customer_name: "Emily Clark", loan_type: "Business", loan_amt: 300000, branch: "Pimpri" },
+            { customer_name: "Mr. Patil", loan_type: "Home", loan_amt: 250000, branch: "Pune" },
+            { customer_name: "Sophia Taylor", loan_type: "Personal", loan_amt: 40000, branch: "Nashik" },
+            { customer_name: "James Wilson", loan_type: "Education", loan_amt: 100000, branch: "Pimpri" },
+            { customer_name: "Derek Anderson", loan_type: "Car", loan_amt: 80000, branch: "Pimpri" },
+            { customer_name: "Nancy Lee", loan_type: "Business", loan_amt: 350000, branch: "Mumbai" }
+        ]);
+
+        // a) List all customers whose name starts with 'D'
+        db.customers.find({ name: /^D/ }).forEach(function(doc) {
+            print(doc.name + " - " + doc.address);
+        });
+
+        // b) List the names of customers in descending order who have taken a loan from Pimpri city
+        db.loans.find({ branch: "Pimpri" }).sort({ customer_name: -1 }).forEach(function(doc) {
+            print(doc.customer_name + " - Loan Amount: " + doc.loan_amt);
+        });
+
+        // c) Display customer details having the maximum loan amount
+        let maxLoan = db.loans.find().sort({ loan_amt: -1 }).limit(1).toArray()[0];
+        let customer = db.customers.findOne({ name: maxLoan.customer_name });
+        print("Name: " + customer.name + ", Address: " + customer.address + ", Loan Amount: " + maxLoan.loan_amt);
+
+        // d) Update the address of a customer whose name is “Mr. Patil” and loan_amt > 100000
+        db.loans.find({ customer_name: "Mr. Patil", loan_amt: { $gt: 100000 } }).forEach(function(doc) {
+            db.customers.updateOne(
+                { name: doc.customer_name },
+                { $set: { address: "Updated Address, Pune" } }
+            );
+        });
+    </script>
+</body>
+</html>
